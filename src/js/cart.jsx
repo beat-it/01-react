@@ -29,6 +29,10 @@ class Cart extends React.Component {
         console.log(change);
     }
 
+    onChangeStep(step_id){
+        console.log(step_id);
+    }
+
     render() {
         //
         // let a = {
@@ -160,6 +164,7 @@ class Cart extends React.Component {
                                deliveryPrice={delivery_price}
                                paymentPrice={payment_price}
                                totalPrice={total_price}
+                               onChangeStep={(step) => this.onChangeStep(step)}
 
                     />
 
@@ -167,6 +172,7 @@ class Cart extends React.Component {
                                billing_address={billing_address}
                                delivery_address={delivery_address}
                                onChangeInput={(change) => this.onChangeInput(change)}
+                               onChangeStep={(step) => this.onChangeStep(step)}
                     />
 
 
@@ -176,19 +182,10 @@ class Cart extends React.Component {
                                delivery_address={delivery_address}
                                payment={payment}
                                delivery={delivery}
+                               onChangeStep={(step) => this.onChangeStep(step)}
                     />
 
 
-                    <div id="cart-buttons-container" className="row">
-                        <a className="button pull-left">
-                            Späť do obchodu
-                        </a>
-
-                        <a href="/cart2.html" className="button button-cart-continue pull-right">
-                            Pokračovať
-                        </a>
-                        <div className="clear"></div>
-                    </div>
                 </div>
             </div>
         );

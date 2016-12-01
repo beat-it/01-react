@@ -4,6 +4,7 @@
 import React from 'react';
 import CartItemsTable from './cart-items-table';
 import DefaultBox from '../default-box';
+import CartButtons from './cart-buttons';
 
 
 class CartStep1 extends React.Component {
@@ -69,6 +70,12 @@ class CartStep1 extends React.Component {
                     </table>
                     <div className="clear"></div>
                 </div>
+
+                <CartButtons
+                    backText="Späť do obchodu"
+                    onBackClick={() => this.props.onChangeStep(0)}
+                    onNextClick={() => this.props.onChangeStep(2)}
+                />
             </div>
         );
     }

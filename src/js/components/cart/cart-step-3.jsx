@@ -5,6 +5,7 @@ import React from 'react';
 import InputBlock from '../input-block';
 import CartItemsTable from './cart-items-table';
 import DefaultBox from '../default-box';
+import CartButtons from './cart-buttons';
 
 class CartStep3 extends React.Component {
     render() {
@@ -85,6 +86,11 @@ class CartStep3 extends React.Component {
                     </DefaultBox>
                     <div className="clear"></div>
                 </div>
+                <CartButtons
+                    nextText="Záväzne objednať s povinnosťou platby"
+                    onBackClick={() => this.props.onChangeStep(2)}
+                    onNextClick={() => this.props.onChangeStep(4)}
+                />
             </div>
         );
     }

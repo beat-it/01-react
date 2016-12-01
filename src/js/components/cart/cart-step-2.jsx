@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import InputBlock from '../input-block';
+import CartButtons from './cart-buttons';
 
 class CartStep2 extends React.Component {
 
@@ -80,6 +81,10 @@ class CartStep2 extends React.Component {
                     </div>
                     <div className="clear"></div>
                 </div>
+                <CartButtons
+                    onBackClick={() => this.props.onChangeStep(1)}
+                    onNextClick={() => this.props.onChangeStep(3)}
+                />
             </div>
         );
     }
