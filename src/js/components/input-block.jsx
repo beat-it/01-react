@@ -7,10 +7,15 @@ class InputBlock extends React.Component {
     constructor(props) {
         super(props);
     }
+
+    onInputChange(event){
+        this.props.onChange(event.target.value);
+    }
+
      render() {
 
          let label = <label htmlFor={this.props.inputId}>{this.props.label}</label>;
-         let input = <input id={this.props.inputId} name={this.props.inputName} type={this.props.inputType} className={this.props.inputClasses}/>;
+         let input = <input onChange={(event) => this.onInputChange(event)} id={this.props.inputId} name={this.props.inputName} type={this.props.inputType} className={this.props.inputClasses} value={this.props.inputValue}/>;
 
          if(this.props.inputType == "text"){
              return(
@@ -36,10 +41,12 @@ InputBlock.propTypes = {
     label: React.PropTypes.string,
     inputName: React.PropTypes.string,
     inputType: React.PropTypes.string,
-    inputClasses: React.PropTypes.string
+    inputClasses: React.PropTypes.string,
+    inputValue: React.PropTypes.string
 };
 
 InputBlock.defaultProps = {
-    inputType: 'text'
+    inputType: 'text',
+    inputValue: ""
 };
 export default InputBlock;

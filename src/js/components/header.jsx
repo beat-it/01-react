@@ -2,6 +2,7 @@
  * Created by laci on 29.11.16.
  */
 import React from 'react';
+import HeaderCountInfo from './header-cart-info';
 
 class Header extends React.Component {
     render() {
@@ -10,26 +11,10 @@ class Header extends React.Component {
             <div className="container">
                 <ul>
                     <li>
-                        <a href="">Položka</a>
-                    </li>
-                    <li>
-                        <a href="">Položka</a>
-                    </li>
-                    <li>
-                        <a href="">Položka</a>
-                    </li>
-                    <li>
-                        <a href="">Položka</a>
-                    </li>
-                    <li>
-                        <a href="">Položka</a>
+                        <a href="/">Home</a>
                     </li>
                 </ul>
-                <div id="cart-container">
-                    <a href="/cart">
-                        0 ks za 0€
-                    </a>
-                </div>
+                <HeaderCountInfo count={0} totalPrice={0}/>
                 <div className="clear"></div>
             </div>
         </nav>);

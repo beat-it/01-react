@@ -6,14 +6,17 @@ import { render } from 'react-dom';
 import HelloWorld from './components/hello-world';
 import Homepage from './homepage';
 import Cart from './cart';
-import { Router, Route, Link, browserHistory } from 'react-router'
+import Main from './main';
+import { Router, Route, Link, browserHistory,IndexRoute } from 'react-router'
 
 require("./../css/custom.css");
 
 render((
     <Router history={browserHistory}>
-        <Route path="/" component={Homepage}></Route>
-        <Route path="cart" component={Cart}></Route>
+        <Route path="/" component={Main}>
+            <IndexRoute component={Homepage}></IndexRoute>
+            <Route path="cart" component={Cart}></Route>
+        </Route>
     </Router>
 ), document.body)
 

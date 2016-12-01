@@ -43,7 +43,7 @@
   "scripts": {
     "start": "npm run develop",
     "develop": "webpack-dev-server --inline --progress -d",
-    "build": "webpack -p --progress",
+    "build": "webpack -p --progress"
   },
   "author": "Ladislav Perduk <perduk@bart.sk>",
   "license": "MIT"

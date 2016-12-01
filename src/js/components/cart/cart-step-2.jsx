@@ -5,6 +5,7 @@ import React from 'react';
 import InputBlock from '../input-block';
 
 class CartStep2 extends React.Component {
+
     render() {
         return(
             <div id="cart-contact-container">
@@ -15,12 +16,12 @@ class CartStep2 extends React.Component {
                 </div>
                 <div id="person-container" className="row">
                     <div className="block">
-                        <InputBlock label="Meno" inputId="name" inputName="name"/>
-                        <InputBlock label="Telefónne číslo" inputId="phone" inputName="phone"/>
+                        <InputBlock onChange={(value) => this.props.onChangeInput({person: {first_name: {$set : value}}})} label="Meno" inputId="name" inputName="name" inputValue={this.props.person.first_name}/>
+                        <InputBlock onChange={(value) => this.props.onChangeInput({person: {phone: {$set : value}}})} label="Telefónne číslo" inputId="phone" inputName="phone" inputValue={this.props.person.phone}/>
                     </div>
                     <div className="block">
-                        <InputBlock label="Priezvisko" inputId="surname" inputName="surname"/>
-                        <InputBlock label="Email" inputId="email" inputName="email"/>
+                        <InputBlock onChange={(value) => this.props.onChangeInput({person: {surname: {$set : value}}})} label="Priezvisko" inputId="surname" inputName="surname" inputValue={this.props.person.surname}/>
+                        <InputBlock onChange={(value) => this.props.onChangeInput({person: {email: {$set : value}}})} label="Email" inputId="email" inputName="email" inputValue={this.props.person.email}/>
                     </div>
                     <div className="clear"></div>
                 </div>
@@ -35,24 +36,24 @@ class CartStep2 extends React.Component {
 
                 <div id="billing-company-container"className="row">
                     <div className="block">
-                        <InputBlock label="Názov firmy" inputId="company-name" inputName="company-name"/>
-                        <InputBlock label="IČO" inputId="ico" inputName="ico"/>
+                        <InputBlock onChange={(value) => this.props.onChangeInput({billing_address: {company : {name: {$set : value}}}})} label="Názov firmy" inputId="company-name" inputName="company-name" inputValue={this.props.billing_address.company.name}/>
+                        <InputBlock onChange={(value) => this.props.onChangeInput({billing_address: {company : {ico: {$set : value}}}})} label="IČO" inputId="ico" inputName="ico" inputValue={this.props.billing_address.company.ico}/>
                     </div>
                     <div className="block">
-                        <InputBlock label="DIČ" inputId="dic" inputName="dic"/>
-                        <InputBlock label="IČ DPH" inputId="ic-dph" inputName="ic-dph"/>
+                        <InputBlock onChange={(value) => this.props.onChangeInput({billing_address: {company : {dic: {$set : value}}}})} label="DIČ" inputId="dic" inputName="dic" inputValue={this.props.billing_address.company.dic}/>
+                        <InputBlock  onChange={(value) => this.props.onChangeInput({billing_address: {company : {ic_dph: {$set : value}}}})} label="IČ DPH" inputId="ic-dph" inputName="ic-dph" inputValue={this.props.billing_address.company.ic_dph}/>
                     </div>
                     <div className="clear"></div>
                 </div>
 
                 <div id="billing-container" className="row">
                     <div className="block">
-                        <InputBlock label="Ulica a číslo" inputId="billing-address" inputName="billing-address"/>
-                        <InputBlock label="Mesto" inputId="billing-city" inputName="billing-city"/>
+                        <InputBlock onChange={(value) => this.props.onChangeInput({billing_address: {address: {$set : value}}})} label="Ulica a číslo" inputId="billing-address" inputName="billing-address" inputValue={this.props.billing_address.address}/>
+                        <InputBlock onChange={(value) => this.props.onChangeInput({billing_address: {city: {$set : value}}})} label="Mesto" inputId="billing-city" inputName="billing-city" inputValue={this.props.billing_address.city}/>
                     </div>
                     <div className="block">
-                        <InputBlock label="PSČ" inputId="billing-zip" inputName="billing-zip"/>
-                        <InputBlock label="Štát" inputId="billing-country" inputName="billing-country"/>
+                        <InputBlock onChange={(value) => this.props.onChangeInput({billing_address: {zip: {$set : value}}})} label="PSČ" inputId="billing-zip" inputName="billing-zip" inputValue={this.props.billing_address.zip}/>
+                        <InputBlock onChange={(value) => this.props.onChangeInput({billing_address: {country: {$set : value}}})} label="Štát" inputId="billing-country" inputName="billing-country" inputValue={this.props.billing_address.country}/>
                     </div>
                     <div className="clear"></div>
                 </div>
@@ -70,12 +71,12 @@ class CartStep2 extends React.Component {
 
                 <div id="delivery-container" className="row">
                     <div className="block">
-                        <InputBlock label="Ulica a číslo" inputId="delivery-address" inputName="delivery-address"/>
-                        <InputBlock label="Mesto" inputId="delivery-city" inputName="delivery-city"/>
+                        <InputBlock onChange={(value) => this.props.onChangeInput({delivery_address: {address: {$set : value}}})} label="Ulica a číslo" inputId="delivery-address" inputName="delivery-address" inputValue={this.props.delivery_address.address}/>
+                        <InputBlock onChange={(value) => this.props.onChangeInput({delivery_address: {city: {$set : value}}})} label="Mesto" inputId="delivery-city" inputName="delivery-city" inputValue={this.props.delivery_address.city}/>
                     </div>
                     <div className="block">
-                        <InputBlock label="PSČ" inputId="delivery-zip" inputName="delivery-zip"/>
-                        <InputBlock label="Štát" inputId="delivery-country" inputName="delivery-country"/>
+                        <InputBlock onChange={(value) => this.props.onChangeInput({delivery_address: {zip: {$set : value}}})} label="PSČ" inputId="delivery-zip" inputName="delivery-zip" inputValue={this.props.delivery_address.zip}/>
+                        <InputBlock onChange={(value) => this.props.onChangeInput({delivery_address: {country: {$set : value}}})} label="Štát" inputId="delivery-country" inputName="delivery-country" inputValue={this.props.delivery_address.country}/>
                     </div>
                     <div className="clear"></div>
                 </div>
