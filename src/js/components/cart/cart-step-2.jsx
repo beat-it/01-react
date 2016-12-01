@@ -31,8 +31,20 @@ class CartStep2 extends React.Component {
                 <span>
                     Fakturačná adresa:
                 </span>
-                    <InputBlock inputType="radio" label="Nakupujem súkromne" inputId="billing-personal" inputName="billing-switch"/>
-                    <InputBlock inputType="radio" label="Nakupujem na firmu" inputId="billing-company" inputName="billing-switch"/>
+                    <InputBlock checked={!this.props.shoppingCompany}
+                                inputType="radio"
+                                label="Nakupujem súkromne"
+                                inputId="billing-personal"
+                                inputName="billing-switch"
+                                onChange={(state) => this.props.onChangeShoppingCompany(false)}
+                    />
+                    <InputBlock checked={this.props.shoppingCompany}
+                                inputType="radio"
+                                label="Nakupujem na firmu"
+                                inputId="billing-company"
+                                inputName="billing-switch"
+                                onChange={(state) => this.props.onChangeShoppingCompany(true)}
+                    />
                 </div>
 
                 <div id="billing-company-container"className="row">
@@ -60,8 +72,13 @@ class CartStep2 extends React.Component {
                 </div>
 
                 <div id="delivery-switch-container" className="row">
-                    <InputBlock inputType="checkbox" label="Dodacia adresa je iná ako fakturačná"
-                                inputId="delivery-switch" inputName="delivery-switch"/>
+                    <InputBlock inputType="checkbox"
+                                label="Dodacia adresa je iná ako fakturačná"
+                                inputId="delivery-switch"
+                                inputName="delivery-switch"
+                                checked={this.props.differentDelAddress}
+                                onChange={(state) => this.props.onChangeDifferentDelAddress(state)}
+                    />
                 </div>
 
                 <div className="row">

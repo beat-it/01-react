@@ -33,6 +33,14 @@ class Cart extends React.Component {
         console.log(step_id);
     }
 
+    onChangeShoopingCompany(comp){
+        console.log(comp);
+    }
+
+    onChangeDifferentDelAddress(comp){
+        console.log(comp);
+    }
+
     render() {
         //
         // let a = {
@@ -148,6 +156,10 @@ class Cart extends React.Component {
             "name": "Osobný odber"
         };
 
+        let shopping_company = true;
+
+        let different_del_address = true;
+
         return (
             <div id="main-container">
                 <div className="container">
@@ -173,6 +185,10 @@ class Cart extends React.Component {
                                delivery_address={delivery_address}
                                onChangeInput={(change) => this.onChangeInput(change)}
                                onChangeStep={(step) => this.onChangeStep(step)}
+                               shoppingCompany={shopping_company}
+                               differentDelAddress={different_del_address}
+                               onChangeShoppingCompany={(state) => this.onChangeShoopingCompany(state)}
+                               onChangeDifferentDelAddress={(state) => this.onChangeDifferentDelAddress(state)}
                     />
 
 
