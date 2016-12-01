@@ -2,111 +2,45 @@
  * Created by laci on 29.11.16.
  */
 import React from 'react';
+import CartItemsTable from './cart-items-table';
+import DefaultBox from '../default-box';
+import CartButtons from './cart-buttons';
+
 
 class CartStep1 extends React.Component {
     render() {
         return(
             <div>
-                <div id="cart-items-container" className="row">
-                    <table id="cart-items" cellPadding="0" cellSpacing="0">
-                        <thead>
-                        <tr>
-                            <th colSpan="3" className="text-left">
-                                Produkt
-                            </th>
-                            <th className="text-center">
-                                Cena za ks
-                            </th>
-                            <th className="text-center">
-                                Počet kusov
-                            </th>
-                            <th className="text-center">
-                                Celkom
-                            </th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td>
-                                <img src="http://placehold.it/80x60" alt="Produkt"/>
-                            </td>
-                            <td>
-                                ZiZi
-                            </td>
-                            <td>
-                                <button className="button">Odstrániť</button>
-                            </td>
-                            <td className="text-center">
-                                150€ / ks
-                            </td>
-                            <td className="text-center">
-                                10ks
-                            </td>
-                            <td className="item-total-price text-center">
-                                1500€
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-
+                <CartItemsTable products={this.props.products} onItemDelete={this.props.onCartItemDelete}/>
                 <div id="payment-delivery-container" className="row">
-                    <div className="block bordered-block">
-                        <h2>
-                            Spôsob platby
-                        </h2>
+                    <DefaultBox name="Spôsob platby">
                         <ul>
-                            <li>
-                                <input name="payment" type="radio" id="KARTA"/>
-                                    <label htmlFor="KARTA">Platba kartou online</label>
-                        <span className="price">
-                            0€
-                        </span>
-                            </li>
-                            <li>
-                                <input name="payment" type="radio" id="PREVODOM"/>
-                                    <label htmlFor="PREVODOM">Platba bankovým prevodom</label>
-                        <span className="price">
-                            2.50€
-                        </span>
-                            </li>
-                            <li>
-                                <input name="payment" type="radio" id="DOBIERKA"/>
-                                    <label htmlFor="DOBIERKA">Platba na dobierku</label>
-                        <span className="price">
-                            2.50€
-                        </span>
-                            </li>
+                            {this.props.paymentOpts.map((payment) => (
+                                <li key={payment.id}>
+                                    <input name="payment" type="radio" id={payment.id} value={payment.id} onChange={() => this.props.onChangePayment(payment.id)}/>
+                                    <label htmlFor={payment.id}>{payment.name}</label>
+                                    <span className="price">
+                                        {payment.price}€
+                                    </span>
+                                </li>
+                            ))}
                         </ul>
-                    </div>
-                    <div className="block bordered-block">
-                        <h2>
-                            Spôsob dopravy
-                        </h2>
+                    </DefaultBox>
+
+                    <DefaultBox name="Spôsob dopravy">
                         <ul>
-                            <li>
-                                <input name="delivery" type="radio" id="KURIER"/>
-                                    <label htmlFor="KURIER">Kurier UPS / SPS</label>
-                        <span className="price">
-                            2.50€
-                        </span>
-                            </li>
-                            <li>
-                                <input name="delivery" type="radio" id="POSTA_BALIK_NA_ADRESU"/>
-                                    <label htmlFor="POSTA_BALIK_NA_ADRESU">Slovenská pošta - Balík na adresu</label>
-                        <span className="price">
-                            2.50€
-                        </span>
-                            </li>
-                            <li>
-                                <input name="delivery" type="radio" id="POSTA_BALIK_NA_POSTU"/>
-                                    <label htmlFor="POSTA_BALIK_NA_POSTU">Slovenská pošta - Balík na poštu</label>
-                        <span className="price">
-                            2.50€
-                        </span>
-                            </li>
+                            {this.props.deliveryOpts.map((delivery) => (
+                                <li key={delivery.id}>
+                                    <input name="payment" type="radio" id={delivery.id} value={delivery.id} onChange={() => this.props.onChangeDelivery(delivery.id)}/>
+                                    <label htmlFor={delivery.id}>{delivery.name}</label>
+                                    <span className="price">
+                                        {delivery.price}€
+                                    </span>
+                                </li>
+                            ))}
                         </ul>
-                    </div>
+                    </DefaultBox>
+
                     <div className="clear"></div>
                 </div>
 
@@ -117,25 +51,31 @@ class CartStep1 extends React.Component {
                     <table cellPadding="0" cellSpacing="0">
                         <tbody>
                             <tr>
-                                <td>Produkty:</td>
-                                <td>1500€</td>
+                                <td>Produkty: </td>
+                                <td>{this.props.product_total_price}€</td>
                             </tr>
                             <tr>
-                                <td>Doprava:</td>
-                                <td>1500€</td>
+                                <td>Doprava: </td>
+                                <td>{this.props.deliveryPrice}€</td>
                             </tr>
                             <tr>
-                                <td>Dobierka:</td>
-                                <td>1500€</td>
+                                <td>Dobierka: </td>
+                                <td>{this.props.paymentPrice}€</td>
                             </tr>
                             <tr className="total-price">
-                                <td>Celkom k úhrade:</td>
-                                <td>1500€</td>
+                                <td>Celkom k úhrade: </td>
+                                <td>{this.props.totalPrice}€</td>
                             </tr>
                         </tbody>
                     </table>
                     <div className="clear"></div>
                 </div>
+
+                <CartButtons
+                    backText="Späť do obchodu"
+                    onBackClick={() => this.props.onChangeStep(0)}
+                    onNextClick={() => this.props.onChangeStep(2)}
+                />
             </div>
         );
     }
