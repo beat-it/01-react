@@ -107,4 +107,16 @@ class CartStep2 extends React.Component {
     }
 }
 
+CartStep2.propTypes = {
+    person: React.PropTypes.object,
+    billing_address: React.PropTypes.object,
+    delivery_address: React.PropTypes.object,
+    shoppingCompany: React.PropTypes.bool,
+    differentDelAddress: React.PropTypes.bool,
+    onChangeShoppingCompany: React.PropTypes.func,
+    onChangeDifferentDelAddress: React.PropTypes.func,
+    onChangeInput: React.PropTypes.func,
+    onChangeStep: React.PropTypes.func
+};
+
 export default CartStep2;

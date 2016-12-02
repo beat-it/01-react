@@ -46,4 +46,14 @@ class Product extends React.Component {
     }
 }
 
+Product.propTypes = {
+    id: React.PropTypes.string,
+    name: React.PropTypes.string,
+    rating: React.PropTypes.number,
+    thumbnail: React.PropTypes.string,
+    description: React.PropTypes.string,
+    price: React.PropTypes.number,
+    onAddToCart: React.PropTypes.func
+};
+
 export default Product;

@@ -7,9 +7,7 @@ class CartItemsTable extends React.Component {
     render() {
 
         let productColSpan = this.props.locked ? 2 : 3;
-        let deleteButton = this.props.locked ? null : (<td>
-            <button onClick={() => this.props.onItemDelete(product.id)} className="button">Odstrániť</button>
-        </td>)
+
         return(
             <div id="cart-items-container" className="row">
                 <table id="cart-items" cellPadding="0" cellSpacing="0">
@@ -38,7 +36,9 @@ class CartItemsTable extends React.Component {
                                 <td>
                                     {product.name}
                                 </td>
-                                {deleteButton}
+                                {this.props.locked ? null : (<td>
+                                    <button onClick={() => this.props.onItemDelete(product.id)} className="button">Odstrániť</button>
+                                </td>)}
                                 <td className="text-center">
                                     {product.price}€ / ks
                                 </td>

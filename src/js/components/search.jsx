@@ -21,4 +21,11 @@ class Search extends React.Component {
     }
 }
 
+Search.propTypes = {
+    searchQuery: React.PropTypes.string,
+    onClick: React.PropTypes.func,
+    onChange: React.PropTypes.func
+};
+
+
 export default Search;

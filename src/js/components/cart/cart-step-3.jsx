@@ -96,9 +96,14 @@ class CartStep3 extends React.Component {
     }
 }
 
-// </div>
-// <div class="clear"></div>
-// </div>
-
+CartStep3.propTypes = {
+    products: React.PropTypes.array,
+    person: React.PropTypes.object,
+    billing_address: React.PropTypes.object,
+    delivery_address: React.PropTypes.object,
+    payment: React.PropTypes.object,
+    delivery: React.PropTypes.object,
+    onChangeStep: React.PropTypes.func,
+};
 
 export default CartStep3;
