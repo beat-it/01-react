@@ -67,7 +67,10 @@ class Cart extends React.Component {
                 }
             ],
             delivery: "KURIER",
-            payment: "CARD_ONLINE"
+            payment: "CARD_ONLINE",
+            shopping_company: false,
+            different_del_address: false
+
         };
     }
 
@@ -125,12 +128,16 @@ class Cart extends React.Component {
         }
     }
 
-    onChangeShoopingCompany(comp){
-        console.log(comp);
+    onChangeShoopingCompany(value){
+        this.setState((prevState,props) => (
+            update(prevState, {shopping_company: {$set: value}})
+        ));
     }
 
-    onChangeDifferentDelAddress(comp){
-        console.log(comp);
+    onChangeDifferentDelAddress(value){
+        this.setState((prevState,props) => (
+            update(prevState, {different_del_address: {$set: value}})
+        ));
     }
 
     getDeliveryOpts(){
@@ -252,10 +259,6 @@ class Cart extends React.Component {
         
         let delivery = this.getActiveDelivery();
 
-        let shopping_company = true;
-
-        let different_del_address = true;
-
         let stepData = null;
         switch (this.state.active_step){
             case 1: stepData =  (
@@ -279,8 +282,8 @@ class Cart extends React.Component {
                 <CartStep2  person={this.state.person}
                             billing_address={this.state.billing_address}
                             delivery_address={this.state.delivery_address}
-                            shoppingCompany={shopping_company}
-                            differentDelAddress={different_del_address}
+                            shoppingCompany={this.state.shopping_company}
+                            differentDelAddress={this.state.different_del_address}
                             onChangeShoppingCompany={(state) => this.onChangeShoopingCompany(state)}
                             onChangeDifferentDelAddress={(state) => this.onChangeDifferentDelAddress(state)}
                             onChangeInput={(change) => this.onChangeInput(change)}

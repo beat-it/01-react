@@ -8,6 +8,41 @@ import CartButtons from './cart-buttons';
 class CartStep2 extends React.Component {
 
     render() {
+
+        let delivery_address_block = this.props.differentDelAddress ? (<div>
+            <div className="row">
+                <h2>
+                    Dodacia adresa
+                </h2>
+            </div>
+
+            <div id="delivery-container" className="row">
+                <div className="block">
+                    <InputBlock onChange={(value) => this.props.onChangeInput({delivery_address: {address: {$set : value}}})} label="Ulica a číslo" inputId="delivery-address" inputName="delivery-address" inputValue={this.props.delivery_address.address}/>
+                    <InputBlock onChange={(value) => this.props.onChangeInput({delivery_address: {city: {$set : value}}})} label="Mesto" inputId="delivery-city" inputName="delivery-city" inputValue={this.props.delivery_address.city}/>
+                </div>
+                <div className="block">
+                    <InputBlock onChange={(value) => this.props.onChangeInput({delivery_address: {zip: {$set : value}}})} label="PSČ" inputId="delivery-zip" inputName="delivery-zip" inputValue={this.props.delivery_address.zip}/>
+                    <InputBlock onChange={(value) => this.props.onChangeInput({delivery_address: {country: {$set : value}}})} label="Štát" inputId="delivery-country" inputName="delivery-country" inputValue={this.props.delivery_address.country}/>
+                </div>
+                <div className="clear"></div>
+            </div>
+        </div>) : null;
+
+        let billing_company = this.props.shoppingCompany ? (
+            <div id="billing-company-container"className="row">
+                <div className="block">
+                    <InputBlock onChange={(value) => this.props.onChangeInput({billing_address: {company : {name: {$set : value}}}})} label="Názov firmy" inputId="company-name" inputName="company-name" inputValue={this.props.billing_address.company.name}/>
+                    <InputBlock onChange={(value) => this.props.onChangeInput({billing_address: {company : {ico: {$set : value}}}})} label="IČO" inputId="ico" inputName="ico" inputValue={this.props.billing_address.company.ico}/>
+                </div>
+                <div className="block">
+                    <InputBlock onChange={(value) => this.props.onChangeInput({billing_address: {company : {dic: {$set : value}}}})} label="DIČ" inputId="dic" inputName="dic" inputValue={this.props.billing_address.company.dic}/>
+                    <InputBlock  onChange={(value) => this.props.onChangeInput({billing_address: {company : {ic_dph: {$set : value}}}})} label="IČ DPH" inputId="ic-dph" inputName="ic-dph" inputValue={this.props.billing_address.company.ic_dph}/>
+                </div>
+                <div className="clear"></div>
+            </div>
+        ) : null;
+
         return(
             <div id="cart-contact-container">
                 <div className="row">
@@ -47,17 +82,7 @@ class CartStep2 extends React.Component {
                     />
                 </div>
 
-                <div id="billing-company-container"className="row">
-                    <div className="block">
-                        <InputBlock onChange={(value) => this.props.onChangeInput({billing_address: {company : {name: {$set : value}}}})} label="Názov firmy" inputId="company-name" inputName="company-name" inputValue={this.props.billing_address.company.name}/>
-                        <InputBlock onChange={(value) => this.props.onChangeInput({billing_address: {company : {ico: {$set : value}}}})} label="IČO" inputId="ico" inputName="ico" inputValue={this.props.billing_address.company.ico}/>
-                    </div>
-                    <div className="block">
-                        <InputBlock onChange={(value) => this.props.onChangeInput({billing_address: {company : {dic: {$set : value}}}})} label="DIČ" inputId="dic" inputName="dic" inputValue={this.props.billing_address.company.dic}/>
-                        <InputBlock  onChange={(value) => this.props.onChangeInput({billing_address: {company : {ic_dph: {$set : value}}}})} label="IČ DPH" inputId="ic-dph" inputName="ic-dph" inputValue={this.props.billing_address.company.ic_dph}/>
-                    </div>
-                    <div className="clear"></div>
-                </div>
+                {billing_company}
 
                 <div id="billing-container" className="row">
                     <div className="block">
@@ -81,23 +106,11 @@ class CartStep2 extends React.Component {
                     />
                 </div>
 
-                <div className="row">
-                    <h2>
-                        Dodacia adresa
-                    </h2>
-                </div>
 
-                <div id="delivery-container" className="row">
-                    <div className="block">
-                        <InputBlock onChange={(value) => this.props.onChangeInput({delivery_address: {address: {$set : value}}})} label="Ulica a číslo" inputId="delivery-address" inputName="delivery-address" inputValue={this.props.delivery_address.address}/>
-                        <InputBlock onChange={(value) => this.props.onChangeInput({delivery_address: {city: {$set : value}}})} label="Mesto" inputId="delivery-city" inputName="delivery-city" inputValue={this.props.delivery_address.city}/>
-                    </div>
-                    <div className="block">
-                        <InputBlock onChange={(value) => this.props.onChangeInput({delivery_address: {zip: {$set : value}}})} label="PSČ" inputId="delivery-zip" inputName="delivery-zip" inputValue={this.props.delivery_address.zip}/>
-                        <InputBlock onChange={(value) => this.props.onChangeInput({delivery_address: {country: {$set : value}}})} label="Štát" inputId="delivery-country" inputName="delivery-country" inputValue={this.props.delivery_address.country}/>
-                    </div>
-                    <div className="clear"></div>
-                </div>
+                {delivery_address_block}
+
+
+
                 <CartButtons
                     onBackClick={() => this.props.onChangeStep(1)}
                     onNextClick={() => this.props.onChangeStep(3)}
