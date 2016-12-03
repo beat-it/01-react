@@ -22,7 +22,7 @@ class Product extends React.Component {
                         {rating}
                     </div>
                     <div className="image-container">
-                        <img src={this.props.thumbnail} alt="Product pic"/>
+                        <img src="http://placehold.it/200x250/ffffff" alt="Product pic"/>
                     </div>
                 </div>
                 <div className="text-container">

@@ -31,7 +31,7 @@ class CartItemsTable extends React.Component {
                         {this.props.products.map((product) => (
                             <tr key={product.id}>
                                 <td>
-                                    <img src={product.image.thumbnail_url} alt="Produkt"/>
+                                    <img src="http://placehold.it/80x60" alt="Produkt"/>
                                 </td>
                                 <td>
                                     {product.name}
@@ -46,7 +46,7 @@ class CartItemsTable extends React.Component {
                                     {product.quantity}ks
                                 </td>
                                 <td className="item-total-price text-center">
-                                    {product.total_price}€
+                                    {product.totalPrice}€
                                 </td>
                             </tr>
                         ))}

@@ -74,14 +74,14 @@ class CartStep3 extends React.Component {
                             Spôsob platby:&nbsp;
                         </strong>
                         <span>
-                            {this.props.payment.name}
+                            {this.props.payment.id}
                         </span>
                         <br/>
                         <strong>
                             Spôsob dodania:&nbsp;
                         </strong>
                         <span>
-                           {this.props.delivery.name}
+                           {this.props.delivery.id}
                         </span>
                     </DefaultBox>
                     <div className="clear"></div>

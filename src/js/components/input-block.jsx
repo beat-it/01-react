@@ -10,16 +10,19 @@ class InputBlock extends React.Component {
 
     onInputChange(event){
         if(this.props.inputType == "text") {
-            this.props.onChange(event.target.value);
+            this.props.onChange(event.target.value, this.props.inputId);
         } else {
-            this.props.onChange(event.target.checked);
+            this.props.onChange(event.target.checked, this.props.inputId);
         }
     }
 
      render() {
-
+         let classes = this.props.inputClasses ? this.props.inputClasses : "";
+         if(this.props.error || this.props.problems.indexOf(this.props.inputId) !== -1){
+             classes += ' warning ';
+         }
          let label = <label htmlFor={this.props.inputId}>{this.props.label}</label>;
-         let input = <input checked={this.props.checked}  onChange={(event) => this.onInputChange(event)} id={this.props.inputId} name={this.props.inputName} type={this.props.inputType} className={this.props.inputClasses} value={this.props.inputValue}/>;
+         let input = <input checked={this.props.checked}  onChange={(event) => this.onInputChange(event)} id={this.props.inputId} name={this.props.inputName} type={this.props.inputType} className={classes} value={this.props.inputValue}/>;
 
          if(this.props.inputType == "text"){
              return(
@@ -46,11 +49,15 @@ InputBlock.propTypes = {
     inputName: React.PropTypes.string,
     inputType: React.PropTypes.string,
     inputClasses: React.PropTypes.string,
-    inputValue: React.PropTypes.string
+    inputValue: React.PropTypes.string,
+    error: React.PropTypes.bool
 };
 
 InputBlock.defaultProps = {
     inputType: 'text',
-    inputValue: ""
+    inputValue: "",
+    error: false,
+    problems: [],
+    inputClasses: null
 };
 export default InputBlock;

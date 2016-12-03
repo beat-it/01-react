@@ -3,13 +3,12 @@ import update from 'immutability-helper';
 
 import Search from './components/search'
 import Product from './components/product'
-
+import Api from './api'
 
 class Homepage extends React.Component {
 
     constructor(props) {
         super(props);
-
         this.state = {
             product_list:[
                 {
@@ -54,6 +53,20 @@ class Homepage extends React.Component {
             ],
             query: ""
         }
+        this.api = new Api('http://localhost:8080/service');
+    }
+
+    componentDidMount(){
+        this.loadProducts();
+    }
+
+    loadProducts(query){
+        this.api.get('/catalog/homepage').then(response => {
+            this.setState((prevState) => (
+                update(prevState, {product_list : {$set : response.products}})
+            ))
+
+        });
     }
 
     onChangeSearchText(text){
@@ -133,8 +146,8 @@ class Homepage extends React.Component {
 
                             {this.state.product_list.map((product) => (
                                 <Product
-                                    key={product.product_id}
-                                    id={product.product_id}
+                                    key={product.productId}
+                                    id={product.productId}
                                     name={product.name}
                                     rating={product.rating}
                                     thumbnail={product.image.catalog_url}

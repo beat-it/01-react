@@ -4,6 +4,7 @@
 import React from 'react';
 import Header from './components/header'
 import update from 'immutability-helper';
+import Api from './api'
 
 class Main extends React.Component {
 
@@ -14,19 +15,37 @@ class Main extends React.Component {
             cart_count: 0,
             cart_product_price: 0
         };
+
+        this.api = new Api('http://localhost:8080/service');
+    }
+
+    componentDidMount(){
+        this.api.get('/cart/info').then(response => {
+            this.setState((prevState, props) => (
+                update(prevState, {cart_count : {$set: response.count}, cart_product_price: {$set: response.totalPrice}})
+            ));
+        });
     }
 
     getChildContext() {
         let _this = this;
         return {
-            addToCart: function (id) {
-                _this.setState((prevState, props) => (
-                    update(prevState, {cart_count : {$set : prevState.cart_count + 23}})
-                ));
+            addToCart: (id) => {
+
+                this.api.post('/cart/items', {productId: id, quantity: 1}).then(response => {
+                    _this.setState((prevState, props) => (
+                        update(prevState, {cart_count : {$set: response.count}, cart_product_price: {$set: response.totalPrice}})
+                    ));
+                });
+
+
             },
-            removeFromCart: function (id) {
-                console.log("KONTEXT");
-                console.log(id);
+            removeFromCart: (id) => {
+                this.api.delete('/cart/items/' + id).then(response => {
+                    _this.setState((prevState, props) => (
+                        update(prevState, {cart_count : {$set: response.count}, cart_product_price: {$set: response.totalPrice}})
+                    ));
+                });
             }
         };
     }
