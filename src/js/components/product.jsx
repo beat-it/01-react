@@ -22,7 +22,7 @@ class Product extends React.Component {
                         {rating}
                     </div>
                     <div className="image-container">
-                        <img src={this.props.thumbnail} alt="Product pic"/>
+                        <img src="http://placehold.it/200x250/ffffff" alt="Product pic"/>
                     </div>
                 </div>
                 <div className="text-container">
@@ -45,5 +45,15 @@ class Product extends React.Component {
         );
     }
 }
+
+Product.propTypes = {
+    id: React.PropTypes.string,
+    name: React.PropTypes.string,
+    rating: React.PropTypes.number,
+    thumbnail: React.PropTypes.string,
+    description: React.PropTypes.string,
+    price: React.PropTypes.number,
+    onAddToCart: React.PropTypes.func
+};
 
 export default Product;

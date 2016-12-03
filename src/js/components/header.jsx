@@ -14,11 +14,16 @@ class Header extends React.Component {
                         <a href="/">Home</a>
                     </li>
                 </ul>
-                <HeaderCountInfo count={0} totalPrice={0}/>
+                <HeaderCountInfo count={this.props.count} totalPrice={this.props.totalPrice}/>
                 <div className="clear"></div>
             </div>
         </nav>);
     }
 }
+
+Header.propTypes = {
+    count: React.PropTypes.number,
+    totalPrice: React.PropTypes.number
+};
 
 export default Header;

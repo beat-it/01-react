@@ -7,9 +7,7 @@ class CartItemsTable extends React.Component {
     render() {
 
         let productColSpan = this.props.locked ? 2 : 3;
-        let deleteButton = this.props.locked ? null : (<td>
-            <button onClick={() => this.props.onItemDelete(product.id)} className="button">Odstrániť</button>
-        </td>)
+
         return(
             <div id="cart-items-container" className="row">
                 <table id="cart-items" cellPadding="0" cellSpacing="0">
@@ -33,12 +31,14 @@ class CartItemsTable extends React.Component {
                         {this.props.products.map((product) => (
                             <tr key={product.id}>
                                 <td>
-                                    <img src={product.image.thumbnail_url} alt="Produkt"/>
+                                    <img src="http://placehold.it/80x60" alt="Produkt"/>
                                 </td>
                                 <td>
                                     {product.name}
                                 </td>
-                                {deleteButton}
+                                {this.props.locked ? null : (<td>
+                                    <button onClick={() => this.props.onItemDelete(product.id)} className="button">Odstrániť</button>
+                                </td>)}
                                 <td className="text-center">
                                     {product.price}€ / ks
                                 </td>
@@ -46,7 +46,7 @@ class CartItemsTable extends React.Component {
                                     {product.quantity}ks
                                 </td>
                                 <td className="item-total-price text-center">
-                                    {product.total_price}€
+                                    {product.totalPrice}€
                                 </td>
                             </tr>
                         ))}

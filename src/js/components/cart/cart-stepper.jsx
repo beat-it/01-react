@@ -34,7 +34,7 @@ class CartStepper extends React.Component {
                                 {item.name}
                             </a>
                         </li>
-                    ))};
+                    ))}
                 </ul>
             </div>
         );
@@ -42,7 +42,7 @@ class CartStepper extends React.Component {
 }
 
 CartStepper.propTypes = {
-    active : React.PropTypes.string
+    active : React.PropTypes.number
 };
 
 export default CartStepper;

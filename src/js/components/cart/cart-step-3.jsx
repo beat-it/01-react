@@ -74,14 +74,14 @@ class CartStep3 extends React.Component {
                             Spôsob platby:&nbsp;
                         </strong>
                         <span>
-                            {this.props.payment.name}
+                            {this.props.payment.id}
                         </span>
                         <br/>
                         <strong>
                             Spôsob dodania:&nbsp;
                         </strong>
                         <span>
-                           {this.props.delivery.name}
+                           {this.props.delivery.id}
                         </span>
                     </DefaultBox>
                     <div className="clear"></div>
@@ -96,9 +96,14 @@ class CartStep3 extends React.Component {
     }
 }
 
-// </div>
-// <div class="clear"></div>
-// </div>
-
+CartStep3.propTypes = {
+    products: React.PropTypes.array,
+    person: React.PropTypes.object,
+    billing_address: React.PropTypes.object,
+    delivery_address: React.PropTypes.object,
+    payment: React.PropTypes.object,
+    delivery: React.PropTypes.object,
+    onChangeStep: React.PropTypes.func,
+};
 
 export default CartStep3;
