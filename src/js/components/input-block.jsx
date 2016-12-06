@@ -8,6 +8,10 @@ class InputBlock extends React.Component {
         super(props);
     }
 
+    /**
+     * Akcia po zmene eventu
+     * @param event
+     */
     onInputChange(event){
         if(this.props.inputType == "text") {
             this.props.onChange(event.target.value, this.props.inputId);
@@ -21,6 +25,7 @@ class InputBlock extends React.Component {
          if(this.props.error || this.props.problems.indexOf(this.props.inputId) !== -1){
              classes += ' warning ';
          }
+
          let label = <label htmlFor={this.props.inputId}>{this.props.label}</label>;
          let input = <input checked={this.props.checked}  onChange={(event) => this.onInputChange(event)} id={this.props.inputId} name={this.props.inputName} type={this.props.inputType} className={classes} value={this.props.inputValue}/>;
 

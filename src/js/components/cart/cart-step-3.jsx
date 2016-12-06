@@ -104,7 +104,7 @@ CartStep3.propTypes = {
     delivery_address: React.PropTypes.object,
     payment: React.PropTypes.object,
     delivery: React.PropTypes.object,
-    onChangeStep: React.PropTypes.func,
+    onChangeStep: React.PropTypes.func
 };
 
 export default CartStep3;

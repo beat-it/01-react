@@ -7,7 +7,7 @@ import classnames from 'classnames'
 class CartStepper extends React.Component {
 
     render() {
-        let step_data = [
+        const step_data = [
             {
                 name: "1. Objednané produkty",
                 active: this.props.active == 1

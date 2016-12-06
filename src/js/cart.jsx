@@ -57,10 +57,96 @@ class Cart extends React.Component {
     }
 
     componentDidMount() {
-        this.loadCart();
-        this.loadDeliveryPaymentOpts();
+        this.initCart();
     }
 
+    static getEmptyCompany(){
+        return {
+            "name": "",
+            "dic": "",
+            "ico": "",
+            "icDph": ""
+        };
+    }
+
+    static getEmptyAddress(){
+        return {
+            "street": "",
+            "city": "",
+            "zip": "",
+            "country": ""
+        };
+    }
+
+    static getEmptyPerson(){
+        return {
+            "forename": "",
+            "surname": "",
+            "email": "",
+            "phone": ""
+        };
+    }
+
+    /**
+     * @deprecated
+     * @param onSuccess
+     */
+    mergeBillingAndDeliveryAddress(onSuccess){
+        if(!this.state.different_del_address){
+            this.setState((prevState) => {
+                let delivery_address = {
+                    "street": prevState.billing_address.billingAddress.street,
+                    "city": prevState.billing_address.billingAddress.city,
+                    "zip": prevState.billing_address.billingAddress.zip,
+                    "country": prevState.billing_address.billingAddress.country
+                };
+                return update(prevState, {delivery_address: {$set: delivery_address}})
+            }, () => {
+                onSuccess();
+            });
+        } else {
+            onSuccess();
+        }
+    }
+
+    /**
+     * Nacitanie obsahu kosika
+     */
+    loadCart() {
+        this.api.get('/cart').then(response => {
+            this.setState((prevState, props) => (
+                update(prevState, {
+                    cart_items: {$set: response.cartItems},
+                    delivery: {$set: response.payment.deliveryType},
+                    payment: {$set: response.payment.paymentMethod},
+                    person: {$set: response.person ? response.person : Cart.getEmptyPerson()},
+                    billing_address: {$set: response.billingDetails ? response.billingDetails : {billingAddress: Cart.getEmptyAddress(), company: Cart.getEmptyCompany()}},
+                    delivery_address: {$set: response.address ? response.address : Cart.getEmptyAddress()},
+                    different_del_address: {$set: response.address ? true : false},
+                    shopping_company: {$set: response.billingDetails && response.billingDetails.company.name !== "" ? true : false}
+                })
+            ));
+        });
+    }
+
+    /**
+     * Inicializacia kosika
+     * @param onSuccess
+     */
+    initCart(onSuccess) {
+        this.api.get('/cart/delivery').then(response => {
+            this.deliveryOpts = response;
+            this.api.get('/cart/payment').then(response => {
+                this.paymentOpts = response;
+                this.loadCart();
+            });
+        });
+    }
+
+    /**
+     * Validacia inputov
+     * @param onValid
+     */
     validateInputs(onValid) {
         let problems = [];
 
@@ -141,68 +227,10 @@ class Cart extends React.Component {
         })
     }
 
-    loadCart() {
-        this.api.get('/cart').then(response => {
-            this.setState((prevState, props) => (
-                update(prevState, {
-                    cart_items: {$set: response.cartItems}, 
-                    delivery: {$set: response.payment.deliveryType}, 
-                    payment: {$set: response.payment.paymentMethod},
-                    person: {$set: response.person ? response.person : {"forename": "",
-                        "surname": "",
-                        "email": "",
-                        "phone": ""}},
-                    billing_address: {$set: response.billingDetails ? response.billingDetails : {billingAddress:{
-                        "street": "",
-                        "city": "",
-                        "zip": "",
-                        "country": ""
-                    },
-                        company: {
-                            "name": "",
-                            "dic": "",
-                            "ico": "",
-                            "icDph": ""}}},
-                    delivery_address: {$set: response.address ? response.address : {  "street": "",
-                        "city": "",
-                        "zip": "",
-                        "country": ""}},
-                    different_del_address: {$set: response.address ? true : false}
-                })
-            ));
-        });
-    }
-
-    loadDeliveryPaymentOpts() {
-        this.api.get('/cart/delivery').then(response => {
-            this.deliveryOpts = response;
-            this.forceUpdate();
-            this.api.get('/cart/payment').then(response => {
-                this.paymentOpts = response;
-                this.forceUpdate();
-            });
-        });
-    }
-
-    onCartItemDelete(id) {
-        this.context.removeFromCart(id,() => {
-            this.loadCart();
-        });
-
-    }
-
-    onChangeDelivery(delivery_id) {
-        this.setState((prevState, props) => (
-            update(prevState, {delivery: {$set: delivery_id}})
-        ))
-    }
-
-    onChangePayment(payment_id) {
-        this.setState((prevState, props) => (
-            update(prevState, {payment: {$set: payment_id}})
-        ))
-    }
-
+    /**
+     * Vysledne ceny v kosiku
+     * @returns {{items_price: number, delivery_price: *, payment_price: *, total_price: *}}
+     */
     getTotalPrice() {
         let itemsPrice = 0;
         let deliveryPrice = this.getActiveDelivery().price;
@@ -221,6 +249,21 @@ class Cart extends React.Component {
         };
     }
 
+    /**
+     * Reálna zmena kroku kosika
+     * @param step_id
+     */
+    changeStep(step_id) {
+        this.setState((prevState, props) => (
+            update(prevState, {active_step: {$set: step_id}})
+        ))
+    }
+
+    /**
+     * Akcia po zmene inputu nad person, adresou, billing details, delivery adres
+     * @param change
+     * @param id
+     */
     onChangeInput(change, id) {
         this.setState((prevState, props) => {
             if (prevState.validation_problems.indexOf(id) !== -1) {
@@ -230,24 +273,42 @@ class Cart extends React.Component {
         });
     }
 
-    mergeBillingAndDeliveryAddress(onSuccess){
-        if(!this.state.different_del_address){
-            this.setState((prevState) => {
-                let delivery_address = {
-                    "street": prevState.billing_address.billingAddress.street,
-                    "city": prevState.billing_address.billingAddress.city,
-                    "zip": prevState.billing_address.billingAddress.zip,
-                    "country": prevState.billing_address.billingAddress.country
-                };
-                return update(prevState, {delivery_address: {$set: delivery_address}})
-            }, () => {
-                onSuccess();
-            });
-        } else {
-            onSuccess();
-        }
+    /**
+     * Akcia pri zmazani itemu v kosiku
+     * @param id
+     */
+    onCartItemDelete(id) {
+        this.context.removeFromCart(id,() => {
+            this.loadCart();
+        });
+
     }
 
+    /**
+     * Akcia na zmenu sposobu dodania
+     * @param delivery_id
+     */
+    onChangeDelivery(delivery_id) {
+        this.setState((prevState, props) => (
+            update(prevState, {delivery: {$set: delivery_id}})
+        ))
+    }
+
+    /**
+     * Akcia na zmenu metody platby
+     * @param payment_id
+     */
+    onChangePayment(payment_id) {
+        this.setState((prevState, props) => (
+            update(prevState, {payment: {$set: payment_id}})
+        ))
+    }
+
+    /**
+     * Akcia pri pokuse o zmenu kroku kosika
+     * @param step_id
+     * @returns {string}
+     */
     onChangeStep(step_id) {
         switch (step_id) {
             case 0:
@@ -286,32 +347,44 @@ class Cart extends React.Component {
         }
     }
 
-    changeStep(step_id) {
-        this.setState((prevState, props) => (
-            update(prevState, {active_step: {$set: step_id}})
-        ))
-    }
-
+    /**
+     * Akcia pri zmene prepinaca: Nakupujes na firmu?
+     * @param value
+     */
     onChangeShoopingCompany(value) {
         this.setState((prevState, props) => (
-            update(prevState, {shopping_company: {$set: value}})
+            update(prevState, {shopping_company: {$set: value},  billing_address: {company: {$set: this.getEmptyCompany()}}})
         ));
     }
 
+    /**
+     * Akcia pri zmene prepinaca: Dodacia adresa ina ako fakturacna?
+     * @param value
+     */
     onChangeDifferentDelAddress(value) {
         this.setState((prevState, props) => (
             update(prevState, {different_del_address: {$set: value}})
         ));
     }
 
+    /**
+     * @returns {Array|*|R}
+     */
     getDeliveryOpts() {
         return this.deliveryOpts;
     }
 
+    /**
+     * @returns {R|*|Array}
+     */
     getPaymentOpts() {
         return this.paymentOpts;
     }
 
+    /**
+     * Vrati objekt aktivnej platby
+     * @returns {*}
+     */
     getActivePayment() {
         let payment = null;
         this.getPaymentOpts().map((item) => {
@@ -327,6 +400,10 @@ class Cart extends React.Component {
         return payment;
     }
 
+    /**
+     * Vrati objekt aktivneho sposobu dodania
+     * @returns {*}
+     */
     getActiveDelivery() {
         let delivery = null;
         this.getDeliveryOpts().map((item) => {
@@ -342,11 +419,16 @@ class Cart extends React.Component {
         return delivery;
     }
 
-    render() {
+    /**
+     * Vrati sablonu kosika
+     * @returns {*}
+     */
+    getStep(){
+        let stepData = null;
 
-        let delivery_opts = this.getDeliveryOpts();
+        const delivery_opts = this.getDeliveryOpts();
 
-        let payment_opts = this.getPaymentOpts();
+        const payment_opts = this.getPaymentOpts();
 
         if (delivery_opts.length != 0 && payment_opts.length != 0) {
             let cart_prices = this.getTotalPrice();
@@ -355,10 +437,9 @@ class Cart extends React.Component {
 
             let delivery = this.getActiveDelivery();
 
-            let stepData = null;
             switch (this.state.active_step) {
                 case 1:
-                    if(this.state.cart_items.length > 0){
+                    if (this.state.cart_items.length > 0) {
                         stepData = (
                             <CartStep1 products={this.state.cart_items}
                                        paymentOpts={payment_opts}
@@ -377,7 +458,8 @@ class Cart extends React.Component {
                         );
                     } else {
                         stepData = (
-                            <div id="no-items">Váš košík neobsahuje žiadne produkty. <br/> <a href="/">Hor sa nakupovať</a></div>
+                            <div id="no-items">Váš košík neobsahuje žiadne produkty. <br/> <a href="/">Hor sa
+                                nakupovať</a></div>
                         )
                     }
 
@@ -411,24 +493,32 @@ class Cart extends React.Component {
                     );
                     break;
             }
-
-            let stepper = null;
-            if(this.state.cart_items.length > 0){
-                stepper = <CartStepper active={this.state.active_step}/>
-            }
-
-            return (
-                <div id="main-container">
-                    <div className="container">
-                        {stepper}
-                        {stepData}
-                    </div>
-                </div>
-            );
-        } else {
-            return (null)
         }
 
+        return stepData;
+    }
+
+    /**
+     * Vrati steper
+     * @returns {*}
+     */
+    getSteper(){
+        let stepper = null;
+        if(this.state.cart_items.length > 0){
+            stepper = <CartStepper active={this.state.active_step}/>
+        }
+        return stepper;
+    }
+
+    render() {
+        return (
+            <div id="main-container">
+                <div className="container">
+                    {this.getSteper()}
+                    {this.getStep()}
+                </div>
+            </div>
+        );
     }
 }
 

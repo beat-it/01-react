@@ -6,12 +6,10 @@ import InputBlock from '../input-block';
 import CartButtons from './cart-buttons';
 
 class CartStep2 extends React.Component {
-
-
-
     render() {
 
         let validationProblems = this.props.validationProblems;
+
         let delivery_address_block = this.props.differentDelAddress ? (<div>
             <div className="row">
                 <h2>
@@ -40,7 +38,7 @@ class CartStep2 extends React.Component {
                 </div>
                 <div className="block">
                     <InputBlock problems={validationProblems} onChange={(value, id) => this.props.onChangeInput({billing_address: {company : {dic: {$set : value}}}}, id)} label="DIČ" inputId="dic" inputName="dic" inputValue={this.props.billing_address.company.dic}/>
-                    <InputBlock problems={validationProblems} onChange={(value, id) => this.props.onChangeInput({billing_address: {company : {ic_dph: {$set : value}}}}, id)} label="IČ DPH" inputId="ic-dph" inputName="ic-dph" inputValue={this.props.billing_address.company.ic_dph}/>
+                    <InputBlock problems={validationProblems} onChange={(value, id) => this.props.onChangeInput({billing_address: {company : {icDph: {$set : value}}}}, id)} label="IČ DPH" inputId="ic-dph" inputName="ic-dph" inputValue={this.props.billing_address.company.icDph}/>
                 </div>
                 <div className="clear"></div>
             </div>

@@ -5,13 +5,19 @@ import React from 'react';
 //todo ratat s menou
 class Product extends React.Component {
 
-
-    render() {
+    /**
+     * Rating produktu
+     * @returns {Array}
+     */
+    getRating(){
         let rating = [];
         for (let i = 0; i <= this.props.rating; i++){
             rating.push(<span key={i} className="star"></span>);
         }
+        return rating;
+    }
 
+    render() {
         return(
             <div className="product">
                 <div className="blur">
@@ -19,7 +25,7 @@ class Product extends React.Component {
                         {this.props.name}
                     </h3>
                     <div className="star-container">
-                        {rating}
+                        {this.getRating()}
                     </div>
                     <div className="image-container">
                         <img src="http://placehold.it/200x250/ffffff" alt="Product pic"/>

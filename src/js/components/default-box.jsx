@@ -17,7 +17,7 @@ class DefaultBox extends React.Component {
 }
 
 DefaultBox.propTypes = {
-    name: React.PropTypes.string,
+    name: React.PropTypes.string
 };
 
 export default DefaultBox;

@@ -10,6 +10,8 @@ import Main from './main';
 
 require("./../css/custom.css");
 
+
+// SHOW TIME!!!
 render((
     <Router history={browserHistory}>
         <Route path="/" component={Main}>
