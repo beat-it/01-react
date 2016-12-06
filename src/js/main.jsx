@@ -25,31 +25,40 @@ class Main extends React.Component {
         });
     }
 
+
+    removeFromCart(id, afterUpdate){
+        this.api.delete('/cart/items/' + id).then(response => {
+            this.setState((prevState, props) => (
+                update(prevState, {cart_count : {$set: response.count}, cart_product_price: {$set: response.totalPrice}})
+            ), () => {
+                afterUpdate();
+            });
+        });
+    }
+
+    addToCart(id){
+        this.api.post('/cart/items', {productId: id, quantity: 1}).then(response => {
+            this.setState((prevState, props) => (
+                update(prevState, {cart_count : {$set: response.count}, cart_product_price: {$set: response.totalPrice}})
+            ));
+        });
+    }
+
+
     /**
      * Pripravime si globalne dostupne metody
      * @returns {{addToCart: (function()), removeFromCart: (function()), changeCartItemQuantity: (function())}}
      */
     getChildContext() {
-        let _this = this;
         return {
             addToCart: (id) => {
-                this.api.post('/cart/items', {productId: id, quantity: 1}).then(response => {
-                    _this.setState((prevState, props) => (
-                        update(prevState, {cart_count : {$set: response.count}, cart_product_price: {$set: response.totalPrice}})
-                    ));
-                });
+                this.addToCart(id);
             },
             removeFromCart: (id, afterUpdate) => {
-                this.api.delete('/cart/items/' + id).then(response => {
-                    _this.setState((prevState, props) => (
-                        update(prevState, {cart_count : {$set: response.count}, cart_product_price: {$set: response.totalPrice}})
-                    ), () => {
-                        afterUpdate();
-                    });
-                });
+                this.removeFromCart(id, afterUpdate)
             },
-            changeCartItemQuantity: (quantity, afterUpdate) => {
-                //TODO IMPLEMENT
+            changeCartItemQuantity: (id, quantity, afterUpdate) => {
+                
             }
         };
     }
