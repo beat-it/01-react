@@ -13,9 +13,6 @@ class Search extends React.Component {
                     placeholder="Nájdite svoj vytúžený produkt..."
                     value={this.props.searchQuery}
                 />
-                <button onClick={(event) => this.props.onClick()}>
-                    Vyhľadať
-                </button>
             </div>
         );
     }

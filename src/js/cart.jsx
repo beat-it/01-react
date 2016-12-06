@@ -17,25 +17,27 @@ class Cart extends React.Component {
         this.state = {
             active_step: 1,
             person: {
-                "first_name": "",
+                "forename": "",
                 "surname": "",
                 "email": "",
                 "phone": ""
             },
             billing_address: {
-                "address": "",
-                "city": "",
-                "zip": "",
-                "country": "",
-                "company": {
+                billingAddress:{
+                    "street": "",
+                    "city": "",
+                    "zip": "",
+                    "country": ""
+                },
+                company: {
                     "name": "",
                     "dic": "",
                     "ico": "",
-                    "ic_dph": ""
+                    "icDph": ""
                 }
             },
             delivery_address: {
-                "address": "",
+                "street": "",
                 "city": "",
                 "zip": "",
                 "country": ""
@@ -62,7 +64,7 @@ class Cart extends React.Component {
     validateInputs(onValid) {
         let problems = [];
 
-        if (this.state.person.first_name == "") {
+        if (this.state.person.forename == "") {
             problems.push("name");
         }
 
@@ -78,19 +80,19 @@ class Cart extends React.Component {
             problems.push("phone");
         }
 
-        if (this.state.billing_address.address == "") {
+        if (this.state.billing_address.billingAddress.street == "") {
             problems.push("billing-address");
         }
 
-        if (this.state.billing_address.city == "") {
+        if (this.state.billing_address.billingAddress.city == "") {
             problems.push("billing-city");
         }
 
-        if (this.state.billing_address.zip == "") {
+        if (this.state.billing_address.billingAddress.zip == "") {
             problems.push("billing-zip");
         }
 
-        if (this.state.billing_address.country == "") {
+        if (this.state.billing_address.billingAddress.country == "") {
             problems.push("billing-country");
         }
 
@@ -107,11 +109,28 @@ class Cart extends React.Component {
                 problems.push("ico");
             }
 
-            if (this.state.billing_address.company.ic_dph == "") {
+            if (this.state.billing_address.company.icDph == "") {
                 problems.push("ic-dph");
             }
         }
 
+        if (this.state.different_del_address) {
+            if (this.state.delivery_address.street == "") {
+                problems.push("delivery-address");
+            }
+
+            if (this.state.delivery_address.city == "") {
+                problems.push("delivery-city");
+            }
+
+            if (this.state.delivery_address.zip == "") {
+                problems.push("delivery-zip");
+            }
+
+            if (this.state.delivery_address.country == "") {
+                problems.push("delivery-country");
+            }
+        }
 
         this.setState((prevState) => (
             update(prevState, {validation_problems: {$set: problems}})
@@ -124,9 +143,32 @@ class Cart extends React.Component {
 
     loadCart() {
         this.api.get('/cart').then(response => {
-            console.log(response);
             this.setState((prevState, props) => (
-                update(prevState, {cart_items: {$set: response.cartItems}})
+                update(prevState, {
+                    cart_items: {$set: response.cartItems}, 
+                    delivery: {$set: response.payment.deliveryType}, 
+                    payment: {$set: response.payment.paymentMethod},
+                    person: {$set: response.person ? response.person : {"forename": "",
+                        "surname": "",
+                        "email": "",
+                        "phone": ""}},
+                    billing_address: {$set: response.billingDetails ? response.billingDetails : {billingAddress:{
+                        "street": "",
+                        "city": "",
+                        "zip": "",
+                        "country": ""
+                    },
+                        company: {
+                            "name": "",
+                            "dic": "",
+                            "ico": "",
+                            "icDph": ""}}},
+                    delivery_address: {$set: response.address ? response.address : {  "street": "",
+                        "city": "",
+                        "zip": "",
+                        "country": ""}},
+                    different_del_address: {$set: response.address ? true : false}
+                })
             ));
         });
     }
@@ -143,7 +185,10 @@ class Cart extends React.Component {
     }
 
     onCartItemDelete(id) {
-        this.context.removeFromCart(id);
+        this.context.removeFromCart(id,() => {
+            this.loadCart();
+        });
+
     }
 
     onChangeDelivery(delivery_id) {
@@ -189,10 +234,10 @@ class Cart extends React.Component {
         if(!this.state.different_del_address){
             this.setState((prevState) => {
                 let delivery_address = {
-                    "address": prevState.billing_address.address,
-                    "city": prevState.billing_address.city,
-                    "zip": prevState.billing_address.zip,
-                    "country": prevState.billing_address.country
+                    "street": prevState.billing_address.billingAddress.street,
+                    "city": prevState.billing_address.billingAddress.city,
+                    "zip": prevState.billing_address.billingAddress.zip,
+                    "country": prevState.billing_address.billingAddress.country
                 };
                 return update(prevState, {delivery_address: {$set: delivery_address}})
             }, () => {
@@ -207,17 +252,26 @@ class Cart extends React.Component {
         switch (step_id) {
             case 0:
                 return window.location = "/";
-            // case 2:
-            //     // this.api.put('/cart',{deliveryType: this.state.delivery, paymentMethod: this.state.payment}).then(response => {
-            //     //     console.log(response);
-            //     // });
-            //     break;
+            case 2:
+                this.api.put('/cart',{deliveryType: this.state.delivery, paymentMethod: this.state.payment}).then(response => {
+                    this.changeStep(step_id);
+                });
+                break;
             case 3:
                 if (this.state.active_step == 2) {
                     this.validateInputs(()=> {
-                        this.mergeBillingAndDeliveryAddress(()=>{
+                        this.api.put('/cart',{
+                            person: {
+                                "forename": this.state.person.forename,
+                                "surname": this.state.person.surname,
+                                "email": this.state.person.email,
+                                "phone": this.state.person.phone
+                            },
+                            billingAddress: this.state.billing_address,
+                            address: this.state.different_del_address ? this.state.delivery_address : null
+                        }).then(response => {
                             this.changeStep(step_id);
-                        })
+                        });
                     })
                 }
                 break;
@@ -252,36 +306,10 @@ class Cart extends React.Component {
 
     getDeliveryOpts() {
         return this.deliveryOpts;
-
-        // return [
-        //     {
-        //         "id": "KURIER",
-        //         "price": 2.50,
-        //         "name": "Doručenie kuriérom"
-        //     },
-        //     {
-        //         "id": "OSOBNY_ODBER",
-        //         "price": 0,
-        //         "name": "Osobný odber"
-        //     }
-        // ];
     }
 
     getPaymentOpts() {
         return this.paymentOpts;
-
-        // return  [
-        //     {
-        //         "id": "CARD_ONLINE",
-        //         "price": 0,
-        //         "name": "Platba kartou online"
-        //     },
-        //     {
-        //         "id": "DOBIERKA",
-        //         "price": 1.50,
-        //         "name": "Platba na dobierku"
-        //     }
-        // ];
     }
 
     getActivePayment() {
@@ -323,62 +351,6 @@ class Cart extends React.Component {
         if (delivery_opts.length != 0 && payment_opts.length != 0) {
             let cart_prices = this.getTotalPrice();
 
-            // let products = [
-            //     {
-            //         id: 123,
-            //         name: "ZiZi",
-            //         price: 4,
-            //         image: {
-            //             "url": "http://.....sk/picture/...",
-            //             "thumbnail_url": "http://placehold.it/80x60",
-            //             "catalog_url": "http://.....sk/picture/catalog..."
-            //         },
-            //         quantity: 10,
-            //         total_price: 40,
-            //         currency: "EUR"
-            //     },
-            //     {
-            //         id: 1223,
-            //         name: "ZiZi",
-            //         price: 4,
-            //         image: {
-            //             "url": "http://.....sk/picture/...",
-            //             "thumbnail_url": "http://placehold.it/80x60",
-            //             "catalog_url": "http://.....sk/picture/catalog..."
-            //         },
-            //         quantity: 10,
-            //         total_price: 40,
-            //         currency: "EUR"
-            //     }
-            // ];
-
-            // let person = {
-            //     "first_name": "Ladislav",
-            //     "surname": "Perduk",
-            //     "email": "perduk@bart.sk",
-            //     "phone": "0900900900"
-            // };
-
-            // let billing_address = {
-            //     "address": "Lomnická 22",
-            //     "city": "Košice",
-            //     "zip": "04001",
-            //     "country": "Slovakia",
-            //     "company": {
-            //         "name": "ZiZi s.r.o.",
-            //         "dic": "000000000000",
-            //         "ico": "000000000000",
-            //         "ic_dph": "SK000000000000"
-            //     }
-            // };
-
-            // let delivery_address = {
-            //     "address": "Lomnická 22",
-            //     "city": "Košice",
-            //     "zip": "04001",
-            //     "country": "Slovakia"
-            // };
-
             let payment = this.getActivePayment();
 
             let delivery = this.getActiveDelivery();
@@ -386,22 +358,29 @@ class Cart extends React.Component {
             let stepData = null;
             switch (this.state.active_step) {
                 case 1:
-                    stepData = (
-                        <CartStep1 products={this.state.cart_items}
-                                   paymentOpts={payment_opts}
-                                   deliveryOpts={delivery_opts}
+                    if(this.state.cart_items.length > 0){
+                        stepData = (
+                            <CartStep1 products={this.state.cart_items}
+                                       paymentOpts={payment_opts}
+                                       deliveryOpts={delivery_opts}
 
-                                   payment={payment}
-                                   delivery={delivery}
-                                   productTotalPrice={cart_prices.items_price}
-                                   totalPrice={cart_prices.total_price}
+                                       payment={payment}
+                                       delivery={delivery}
+                                       productTotalPrice={cart_prices.items_price}
+                                       totalPrice={cart_prices.total_price}
 
-                                   onChangeStep={(step) => this.onChangeStep(step)}
-                                   onCartItemDelete={(id) => this.onCartItemDelete(id)}
-                                   onChangeDelivery={(id) => this.onChangeDelivery(id)}
-                                   onChangePayment={(id) => this.onChangePayment(id)}
-                        />
-                    );
+                                       onChangeStep={(step) => this.onChangeStep(step)}
+                                       onCartItemDelete={(id) => this.onCartItemDelete(id)}
+                                       onChangeDelivery={(id) => this.onChangeDelivery(id)}
+                                       onChangePayment={(id) => this.onChangePayment(id)}
+                            />
+                        );
+                    } else {
+                        stepData = (
+                            <div id="no-items">Váš košík neobsahuje žiadne produkty. <br/> <a href="/">Hor sa nakupovať</a></div>
+                        )
+                    }
+
                     break;
                 case 2:
                     stepData = (
@@ -427,15 +406,21 @@ class Cart extends React.Component {
                                    payment={payment}
                                    delivery={delivery}
                                    onChangeStep={(step) => this.onChangeStep(step)}
+                                   differentDelAddress={this.state.different_del_address}
                         />
                     );
                     break;
             }
 
+            let stepper = null;
+            if(this.state.cart_items.length > 0){
+                stepper = <CartStepper active={this.state.active_step}/>
+            }
+
             return (
                 <div id="main-container">
                     <div className="container">
-                        <CartStepper active={this.state.active_step}/>
+                        {stepper}
                         {stepData}
                     </div>
                 </div>

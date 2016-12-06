@@ -11,6 +11,7 @@ body{
 
 a{
     text-decoration: none;
+    cursor: pointer;
 }
 
 .clear{
@@ -215,6 +216,10 @@ nav ul li a{
     font-weight: 600;
     font-size: 25px;
     text-align: center;
+}
+
+.products-container .product .image-container{
+    min-height: 250px;
 }
 
 .products-container .product .image-container img{
@@ -466,5 +471,11 @@ table#cart-items td{
 
 #delivery-switch-container{
     font-size: 16px;
+    font-weight: bold;
+}
+
+#no-items{
+    text-align: center;
+    font-size: 18px;
     font-weight: bold;
 }

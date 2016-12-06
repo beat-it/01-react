@@ -8,47 +8,48 @@ import DefaultBox from '../default-box';
 import CartButtons from './cart-buttons';
 
 class CartStep3 extends React.Component {
+
+    getAddressBox(isDeliveryAddress){
+        const boxName = isDeliveryAddress ? "Dodacia adresa" : "Fakturačná adresa";
+        let name = this.props.person.forename + " " + this.props.person.surname;
+        let street = this.props.billing_address.billingAddress.street;
+        let zipCity = this.props.billing_address.billingAddress.zip + " " + this.props.billing_address.billingAddress.city;
+
+        if(isDeliveryAddress && this.props.differentDelAddress){
+            street = this.props.delivery_address.street;
+            zipCity = this.props.delivery_address.zip + " " + this.props.delivery_address.city;
+        }
+
+        return (
+            <DefaultBox name={boxName}>
+                <strong>
+                    {name}
+                </strong>
+                <br/>
+                    <span>
+                        {street}
+                    </span>
+                <br/>
+                    <span>
+                        {zipCity}
+                    </span>
+            </DefaultBox>
+        )
+    }
+
     render() {
+
+        const billingAddressBox = this.getAddressBox(false);
+        const deliveryAddressBox = this.getAddressBox(true);
+
         return(
             <div>
                 <div id="cart-items-container" className="row">
                     <CartItemsTable products={this.props.products} locked={true}/>
                 </div>
                 <div id="addresses-container" className="row">
-                    <DefaultBox name="Fakturačná adresa">
-                            <strong>
-                                {this.props.person.first_name}
-                                &nbsp;
-                                {this.props.person.surname}
-                            </strong>
-                            <br/>
-                            <span>
-                                {this.props.billing_address.address}
-                            </span>
-                            <br/>
-                            <span>
-                                {this.props.billing_address.zip}
-                                &nbsp;
-                                {this.props.billing_address.city}
-                            </span>
-                    </DefaultBox>
-                    <DefaultBox name="Dodacia adresa">
-                        <strong>
-                            {this.props.person.first_name}
-                            &nbsp;
-                            {this.props.person.surname}
-                        </strong>
-                        <br/>
-                            <span>
-                                {this.props.delivery_address.address}
-                            </span>
-                        <br/>
-                            <span>
-                                {this.props.delivery_address.zip}
-                                &nbsp;
-                                {this.props.delivery_address.city}
-                            </span>
-                    </DefaultBox>
+                    {billingAddressBox}
+                    {deliveryAddressBox}
                     <div className="clear"></div>
                 </div>
                 <div id="contacts-container" className="row">
@@ -57,7 +58,7 @@ class CartStep3 extends React.Component {
                             Email:&nbsp;
                         </strong>
                         <span>
-                            {this.props.person.first_name}
+                            {this.props.person.forename}
                             &nbsp;
                             {this.props.person.surname}
                         </span>
@@ -74,14 +75,14 @@ class CartStep3 extends React.Component {
                             Spôsob platby:&nbsp;
                         </strong>
                         <span>
-                            {this.props.payment.id}
+                            {this.props.payment.name}
                         </span>
                         <br/>
                         <strong>
                             Spôsob dodania:&nbsp;
                         </strong>
                         <span>
-                           {this.props.delivery.id}
+                           {this.props.delivery.name}
                         </span>
                     </DefaultBox>
                     <div className="clear"></div>

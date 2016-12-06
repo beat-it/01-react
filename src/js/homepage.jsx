@@ -10,49 +10,9 @@ class Homepage extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            product_list:[
-                {
-                    "product_id": "12",
-                    "name": "Product 1",
-                    "price": 20.04,
-                    "currency": "EUR",
-                    "description": "Lorem ipsum dolor sit amet...",
-                    "rating": 3,
-                    "image":{
-                        "url": "http://.....sk/picture/...",
-                        "thumbnail_url": "http://.....sk/picture/thumbnail...",
-                        "catalog_url": "http://placehold.it/200x250/ffffff"
-                    }
-                },
-                {
-                    "product_id": "2",
-                    "name": "Product 1",
-                    "price": 20.04,
-                    "currency": "EUR",
-                    "description": "Lorem ipsum dolor sit amet...",
-                    "rating": 3,
-                    "image":{
-                        "url": "http://.....sk/picture/...",
-                        "thumbnail_url": "http://.....sk/picture/thumbnail...",
-                        "catalog_url": "http://placehold.it/200x250/ffffff"
-                    }
-                },
-                {
-                    "product_id": "33",
-                    "name": "Product 1",
-                    "price": 20.04,
-                    "currency": "EUR",
-                    "description": "Lorem ipsum dolor sit amet...",
-                    "rating": 3,
-                    "image":{
-                        "url": "http://.....sk/picture/...",
-                        "thumbnail_url": "http://.....sk/picture/thumbnail...",
-                        "catalog_url": "http://placehold.it/200x250/ffffff."
-                    }
-                }
-            ],
+            product_list:[],
             query: ""
-        }
+        };
         this.api = new Api('http://localhost:8080/service');
     }
 
@@ -61,22 +21,24 @@ class Homepage extends React.Component {
     }
 
     loadProducts(query){
-        this.api.get('/catalog/homepage').then(response => {
-            this.setState((prevState) => (
-                update(prevState, {product_list : {$set : response.products}})
-            ))
+        if(!query || query == ""){
+            this.api.get('/catalog/homepage').then(response => {
+                this.setState((prevState) => (
+                    update(prevState, {product_list : {$set : response.products}, query: {$set : ""}})
+                ))
 
-        });
+            });
+        } else {
+            this.api.get("/catalog/search/" + query).then(response => {
+                this.setState((prevState) => {
+                    return update(prevState, {query: {$set : query}, product_list: {$set: response.products}});
+                })
+            });
+        }
     }
 
-    onChangeSearchText(text){
-        this.setState((prevState) => (
-            update(prevState, {query: {$set : text}})
-        ))
-    }
-
-    onClickStartSearch(){
-        console.log(this.state)
+    onClickDeleteFilter(){
+        this.loadProducts();
     }
 
     onProductAddToCart(product_id){
@@ -84,49 +46,28 @@ class Homepage extends React.Component {
     }
 
     render() {
-        // let query = "";
-        //
-        // let products = [
-        //     {
-        //         "product_id": "12",
-        //         "name": "Product 1",
-        //         "price": 20.04,
-        //         "currency": "EUR",
-        //         "description": "Lorem ipsum dolor sit amet...",
-        //         "rating": 3,
-        //         "image":{
-        //             "url": "http://.....sk/picture/...",
-        //             "thumbnail_url": "http://.....sk/picture/thumbnail...",
-        //             "catalog_url": "http://placehold.it/200x250/ffffff"
-        //         }
-        //     },
-        //     {
-        //         "product_id": "2",
-        //         "name": "Product 1",
-        //         "price": 20.04,
-        //         "currency": "EUR",
-        //         "description": "Lorem ipsum dolor sit amet...",
-        //         "rating": 3,
-        //         "image":{
-        //             "url": "http://.....sk/picture/...",
-        //             "thumbnail_url": "http://.....sk/picture/thumbnail...",
-        //             "catalog_url": "http://placehold.it/200x250/ffffff"
-        //         }
-        //     },
-        //     {
-        //         "product_id": "33",
-        //         "name": "Product 1",
-        //         "price": 20.04,
-        //         "currency": "EUR",
-        //         "description": "Lorem ipsum dolor sit amet...",
-        //         "rating": 3,
-        //         "image":{
-        //             "url": "http://.....sk/picture/...",
-        //             "thumbnail_url": "http://.....sk/picture/thumbnail...",
-        //             "catalog_url": "http://placehold.it/200x250/ffffff."
-        //         }
-        //     }
-        // ];
+
+        let homepageData = null;
+        if(this.state.product_list.length > 0){
+            homepageData = [];
+            {this.state.product_list.map((product) => {
+                homepageData.push(
+                    <Product
+                        key={product.productId}
+                        id={product.productId}
+                        name={product.name}
+                        rating={product.rating}
+                        thumbnail={product.image.catalog_url}
+                        description={product.description}
+                        price={product.price}
+                        onAddToCart={(product_id) => this.onProductAddToCart(product_id)}
+                    />
+                )
+            })}
+        } else{
+            homepageData = <div id="no-items">Žiadne produkty neboli nájdené. <br/> <a onClick={() => this.onClickDeleteFilter()}>Zrušiť filtrovanie</a></div>
+        }
+
         return (
             <div>
                 <div id="main-container">
@@ -135,7 +76,7 @@ class Homepage extends React.Component {
                             <span className="text">
 
                             </span>
-                            <Search onChange={(text) => this.onChangeSearchText(text)}
+                            <Search onChange={(query) => this.loadProducts(query)}
                                     onClick={() => this.onClickStartSearch()}
                                     searchQuery={this.state.query}
                             />
@@ -143,19 +84,7 @@ class Homepage extends React.Component {
                     </div>
                     <div className="container">
                         <div className="products-container">
-
-                            {this.state.product_list.map((product) => (
-                                <Product
-                                    key={product.productId}
-                                    id={product.productId}
-                                    name={product.name}
-                                    rating={product.rating}
-                                    thumbnail={product.image.catalog_url}
-                                    description={product.description}
-                                    price={product.price}
-                                    onAddToCart={(product_id) => this.onProductAddToCart(product_id)}
-                                />
-                            ))}
+                            {homepageData}
                             <div className="clear"/>
                         </div>
                     </div>

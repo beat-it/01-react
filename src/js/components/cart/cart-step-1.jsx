@@ -18,7 +18,7 @@ class CartStep1 extends React.Component {
                             {this.props.paymentOpts.map((payment) => (
                                 <li key={payment.id}>
                                     <input checked={this.props.payment.id == payment.id} name="payment" type="radio" id={payment.id} value={payment.id} onChange={() => this.props.onChangePayment(payment.id)}/>
-                                    <label htmlFor={payment.id}>{payment.id}</label>
+                                    <label htmlFor={payment.id}>{payment.name}</label>
                                     <span className="price">
                                         {payment.price}€
                                     </span>
@@ -32,7 +32,7 @@ class CartStep1 extends React.Component {
                             {this.props.deliveryOpts.map((delivery) => (
                                 <li key={delivery.id}>
                                     <input checked={this.props.delivery.id == delivery.id} name="delivery" type="radio" id={delivery.id} value={delivery.id} onChange={() => this.props.onChangeDelivery(delivery.id)}/>
-                                    <label htmlFor={delivery.id}>{delivery.id}</label>
+                                    <label htmlFor={delivery.id}>{delivery.name}</label>
                                     <span className="price">
                                         {delivery.price}€
                                     </span>

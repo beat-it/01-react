@@ -40,11 +40,13 @@ class Main extends React.Component {
 
 
             },
-            removeFromCart: (id) => {
+            removeFromCart: (id, afterUpdate) => {
                 this.api.delete('/cart/items/' + id).then(response => {
                     _this.setState((prevState, props) => (
                         update(prevState, {cart_count : {$set: response.count}, cart_product_price: {$set: response.totalPrice}})
-                    ));
+                    ), () => {
+                        afterUpdate();
+                    });
                 });
             }
         };

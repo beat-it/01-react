@@ -12,9 +12,6 @@ class CartStep2 extends React.Component {
     render() {
 
         let validationProblems = this.props.validationProblems;
-
-        console.log(validationProblems);
-
         let delivery_address_block = this.props.differentDelAddress ? (<div>
             <div className="row">
                 <h2>
@@ -24,7 +21,7 @@ class CartStep2 extends React.Component {
 
             <div id="delivery-container" className="row">
                 <div className="block">
-                    <InputBlock problems={validationProblems} onChange={(value, id) => this.props.onChangeInput({delivery_address: {address: {$set : value}}}, id)} label="Ulica a číslo" inputId="delivery-address" inputName="delivery-address" inputValue={this.props.delivery_address.address}/>
+                    <InputBlock problems={validationProblems} onChange={(value, id) => this.props.onChangeInput({delivery_address: {street: {$set : value}}}, id)} label="Ulica a číslo" inputId="delivery-address" inputName="delivery-address" inputValue={this.props.delivery_address.street}/>
                     <InputBlock problems={validationProblems} onChange={(value, id) => this.props.onChangeInput({delivery_address: {city: {$set : value}}}, id)} label="Mesto" inputId="delivery-city" inputName="delivery-city" inputValue={this.props.delivery_address.city}/>
                 </div>
                 <div className="block">
@@ -58,7 +55,7 @@ class CartStep2 extends React.Component {
                 </div>
                 <div id="person-container" className="row">
                     <div className="block">
-                        <InputBlock problems={validationProblems} onChange={(value, id) => this.props.onChangeInput({person: {first_name: {$set : value}}}, id)} label="Meno" inputId="name" inputName="name" inputValue={this.props.person.first_name}/>
+                        <InputBlock problems={validationProblems} onChange={(value, id) => this.props.onChangeInput({person: {forename: {$set : value}}}, id)} label="Meno" inputId="name" inputName="name" inputValue={this.props.person.forename}/>
                         <InputBlock problems={validationProblems} onChange={(value, id) => this.props.onChangeInput({person: {phone: {$set : value}}}, id)} label="Telefónne číslo" inputId="phone" inputName="phone" inputValue={this.props.person.phone}/>
                     </div>
                     <div className="block">
@@ -92,12 +89,12 @@ class CartStep2 extends React.Component {
 
                 <div id="billing-container" className="row">
                     <div className="block">
-                        <InputBlock problems={validationProblems} onChange={(value, id) => this.props.onChangeInput({billing_address: {address: {$set : value}}}, id)} label="Ulica a číslo" inputId="billing-address" inputName="billing-address" inputValue={this.props.billing_address.address}/>
-                        <InputBlock problems={validationProblems} onChange={(value, id) => this.props.onChangeInput({billing_address: {city: {$set : value}}}, id)} label="Mesto" inputId="billing-city" inputName="billing-city" inputValue={this.props.billing_address.city}/>
+                        <InputBlock problems={validationProblems} onChange={(value, id) => this.props.onChangeInput({billing_address: {billingAddress : {street: {$set : value}}}}, id)} label="Ulica a číslo" inputId="billing-address" inputName="billing-address" inputValue={this.props.billing_address.billingAddress.street}/>
+                        <InputBlock problems={validationProblems} onChange={(value, id) => this.props.onChangeInput({billing_address: {billingAddress : {city: {$set : value}}}}, id)} label="Mesto" inputId="billing-city" inputName="billing-city" inputValue={this.props.billing_address.billingAddress.city}/>
                     </div>
                     <div className="block">
-                        <InputBlock problems={validationProblems} onChange={(value, id) => this.props.onChangeInput({billing_address: {zip: {$set : value}}}, id)} label="PSČ" inputId="billing-zip" inputName="billing-zip" inputValue={this.props.billing_address.zip}/>
-                        <InputBlock problems={validationProblems} onChange={(value, id) => this.props.onChangeInput({billing_address: {country: {$set : value}}}, id)} label="Štát" inputId="billing-country" inputName="billing-country" inputValue={this.props.billing_address.country}/>
+                        <InputBlock problems={validationProblems} onChange={(value, id) => this.props.onChangeInput({billing_address: {billingAddress : {zip: {$set : value}}}}, id)} label="PSČ" inputId="billing-zip" inputName="billing-zip" inputValue={this.props.billing_address.billingAddress.zip}/>
+                        <InputBlock problems={validationProblems} onChange={(value, id) => this.props.onChangeInput({billing_address: {billingAddress : {country: {$set : value}}}}, id)} label="Štát" inputId="billing-country" inputName="billing-country" inputValue={this.props.billing_address.billingAddress.country}/>
                     </div>
                     <div className="clear"></div>
                 </div>
