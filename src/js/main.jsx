@@ -25,39 +25,15 @@ class Main extends React.Component {
         });
     }
 
-
-    removeFromCart(id, afterUpdate){
+    removeFromCart(id, afterDelete){
         this.api.delete('/cart/items/' + id).then(response => {
-            this.setState((prevState, props) => (
-                update(prevState, {cart_count : {$set: response.count}, cart_product_price: {$set: response.totalPrice}})
-            ), () => {
-                afterUpdate();
-            });
+            afterDelete(response);
         });
     }
 
-    addToCart(id){
+    addToCart(id, afterAdd){
         this.api.post('/cart/items', {productId: id, quantity: 1}).then(response => {
-            this.setState((prevState, props) => (
-                update(prevState, {cart_count : {$set: response.count}, cart_product_price: {$set: response.totalPrice}})
-            ));
-        });
-    }
-
-    //TODO prerobit na -> callback po delete
-    multipleAddToCart(id, count, afterUpdate){
-        let promises = [];
-
-        promises.push(this.api.delete('/cart/items/' + id));
-        promises.push(this.api.post('/cart/items', {productId: id, quantity: count}));
-
-        Promise.all(promises).then((response) => {
-            const last = response[response.length - 1];
-            this.setState((prevState, props) => (
-                update(prevState, {cart_count : {$set: last.count}, cart_product_price: {$set: last.totalPrice}})
-            ),() => {
-                afterUpdate();
-            });
+            afterAdd(response);
         });
     }
 
@@ -68,10 +44,20 @@ class Main extends React.Component {
     getChildContext() {
         return {
             addToCart: (id) => {
-                this.addToCart(id);
+                this.addToCart(id,(response) => {
+                    this.setState((prevState, props) => (
+                        update(prevState, {cart_count : {$set: response.count}, cart_product_price: {$set: response.totalPrice}})
+                    ));
+                });
             },
             removeFromCart: (id, afterUpdate) => {
-                this.removeFromCart(id, afterUpdate)
+                this.removeFromCart(id, (response) => {
+                    this.setState((prevState, props) => (
+                        update(prevState, {cart_count : {$set: response.count}, cart_product_price: {$set: response.totalPrice}})
+                    ), () => {
+                        afterUpdate();
+                    });
+                })
             },
             changeCartItemQuantity: (id, quantity, afterUpdate) => {
                 
