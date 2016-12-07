@@ -31,8 +31,8 @@ class Main extends React.Component {
         });
     }
 
-    addToCart(id, afterAdd){
-        this.api.post('/cart/items', {productId: id, quantity: 1}).then(response => {
+    addToCart(id, count, afterAdd){
+        this.api.post('/cart/items', {productId: id, quantity: count}).then(response => {
             afterAdd(response);
         });
     }
@@ -44,7 +44,7 @@ class Main extends React.Component {
     getChildContext() {
         return {
             addToCart: (id) => {
-                this.addToCart(id,(response) => {
+                this.addToCart(id,1,(response) => {
                     this.setState((prevState, props) => (
                         update(prevState, {cart_count : {$set: response.count}, cart_product_price: {$set: response.totalPrice}})
                     ));
