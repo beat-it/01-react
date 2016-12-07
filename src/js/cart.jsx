@@ -11,6 +11,7 @@ import Api from './api'
 //TODO -> pripravit sa na to aby sme vedeli pridat a odobrat produkt podla tych metod ktore mame
 class Cart extends React.Component {
 
+    //https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map
     constructor(props) {
         super(props);
 
@@ -53,7 +54,7 @@ class Cart extends React.Component {
         this.deliveryOpts = [];
         this.paymentOpts = [];
 
-        this.api = new Api('http://localhost:8080/service');
+        this.api = Api;
     }
 
     componentDidMount() {
@@ -130,7 +131,11 @@ class Cart extends React.Component {
     }
 
     /**
-     * Inicializacia kosika
+     * TODO UPRAVIT NA STATE
+     * PROMISE ALL -> toto zavolat aj s load cart
+     */
+    /**
+     * Inicializacia kosik
      * @param onSuccess
      */
     initCart(onSuccess) {
@@ -382,6 +387,7 @@ class Cart extends React.Component {
     }
 
     /**
+     * PREROBIT NA OBJEKT
      * Vrati objekt aktivnej platby
      * @returns {*}
      */
@@ -430,6 +436,7 @@ class Cart extends React.Component {
 
         const payment_opts = this.getPaymentOpts();
 
+        //TODO Ked prerobis delivery - toto odstran
         if (delivery_opts.length != 0 && payment_opts.length != 0) {
             let cart_prices = this.getTotalPrice();
 

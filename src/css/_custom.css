@@ -70,9 +70,9 @@ a{
 
 .row .block h2{
     font-family: 'Dosis', sans-serif;
-    color: #D1894E;
+    color: #d09683;
     padding: 5px 0 10px 0;
-    border-bottom: 1px dashed #D1894E;
+    border-bottom: 1px dashed #d09683;
     margin: 0 0 10px 0;
 }
 
@@ -105,7 +105,8 @@ nav ul li a{
     color: #555555;
     letter-spacing: 0.5px;
     font-size: 20px;
-    padding: 0 15px;
+    padding: 0 15p
+    x;
 }
 
 #main-container{
@@ -113,15 +114,11 @@ nav ul li a{
 }
 
 #cart-container{
-    background: url("../images/cart-icon.png") no-repeat 13px center #5d4c46;
+    background: url("../images/cart-icon.png") no-repeat 13px center #73605b;
     float: right;
     padding: 10px 25px 10px 45px;
     border-radius: 20px;
     color: #FFF;
-}
-
-#cart-container:hover{
-    background-color: #D1894E;
 }
 
 #cart-container a{
@@ -215,7 +212,7 @@ nav ul li a{
     margin: 0;
     padding: 0;
     font-family: 'Dosis', sans-serif;
-    color: #D1894E;
+    color: #d09683;
     font-weight: 600;
     font-size: 25px;
     text-align: center;
@@ -250,7 +247,7 @@ nav ul li a{
 
 .products-container .product .price{
     font-weight: bold;
-    color: #5d4c46;
+    color: #73605B;
     font-size: 25px;
     float: left;
     position: relative;
@@ -261,15 +258,11 @@ nav ul li a{
 .products-container .product .add-to-cart-button{
     display: block;
     width: 150px;
-    background: #5d4c46;
+    background: #73605b;
     padding: 10px;
     color: #fff;
     border-radius: 20px;
     float: right;
-}
-
-.products-container .product .add-to-cart-button:hover {
-    background: #D1894E;
 }
 
 .products-container .product .description-container{
@@ -285,7 +278,7 @@ nav ul li a{
 }
 
 .products-container .product .description-container h4{
-    color: #D1894E;
+    color: #d09683;
     font-weight: 600;
     font-size: 25px;
 }
@@ -315,7 +308,7 @@ nav ul li a{
 #stepper-container ul{
     margin: 0;
     padding: 0;
-    background: #5d4c46;
+    background: #363237;
     border-radius: 5px;
 }
 
@@ -345,7 +338,7 @@ nav ul li a{
 
 
 #stepper-container ul li.active a{
-    background: #D1894E;
+    background: #73605b;
 }
 
 table#cart-items{
@@ -355,7 +348,7 @@ table#cart-items{
 }
 
 table#cart-items thead th{
-    background: #5d4c46;
+    background: #555555;
     padding: 10px 5px;
     color: #fff;
 }
@@ -397,7 +390,7 @@ table#cart-items td{
 }
 
 #payment-delivery-container .block ul li .price{
-    color: #D1894E;
+    color: #d09683;
     font-weight: bold;
     padding-left: 10px;
     font-size: 18px;
@@ -424,7 +417,7 @@ table#cart-items td{
 
 #price-summary-container table tr.total-price td{
     font-weight: bold;
-    color: #D1894E;
+    color: #d09683;
     font-size: 18px;
     border-top: 1px solid #cacaca;
 }
@@ -435,7 +428,7 @@ table#cart-items td{
 
 #cart-buttons-container .button-cart-continue{
     padding: 10px 50px;
-    background: #5d4c46;
+    background: #73605b;
     color: #fff;
     font-weight: bold;
     font-size: 18px;
@@ -460,11 +453,6 @@ table#cart-items td{
     border: 1px solid #cacaca;
 }
 
-#cart-contact-container input[type='text']:focus{
-    border: 1px solid #D1894E;
-}
-
-
 #cart-contact-container input[type='text'].warning{
     border: 1px solid #ca2718;
 }
@@ -473,7 +461,7 @@ table#cart-items td{
 #billing-type-container{
     font-size: 16px;
     font-weight: bold;
-    border-bottom: 1px dashed #D1894E;
+    border-bottom: 1px dashed #d09683;
     padding: 10px 0;
 }
 

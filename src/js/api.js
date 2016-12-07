@@ -98,4 +98,4 @@ class Api {
     }
 }
 
-export default Api;
+export default new Api('http://localhost:8080/service');

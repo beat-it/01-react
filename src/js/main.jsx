@@ -14,7 +14,7 @@ class Main extends React.Component {
             cart_count: 0,
             cart_product_price: 0
         };
-        this.api = new Api('http://localhost:8080/service');
+        this.api = Api;
     }
 
     componentDidMount(){
@@ -44,6 +44,22 @@ class Main extends React.Component {
         });
     }
 
+    //TODO prerobit na -> callback po delete
+    multipleAddToCart(id, count, afterUpdate){
+        let promises = [];
+
+        promises.push(this.api.delete('/cart/items/' + id));
+        promises.push(this.api.post('/cart/items', {productId: id, quantity: count}));
+
+        Promise.all(promises).then((response) => {
+            const last = response[response.length - 1];
+            this.setState((prevState, props) => (
+                update(prevState, {cart_count : {$set: last.count}, cart_product_price: {$set: last.totalPrice}})
+            ),() => {
+                afterUpdate();
+            });
+        });
+    }
 
     /**
      * Pripravime si globalne dostupne metody

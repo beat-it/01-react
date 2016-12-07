@@ -14,7 +14,7 @@ class Homepage extends React.Component {
             product_list:[],
             query: ""
         };
-        this.api = new Api('http://localhost:8080/service');
+        this.api = Api;
     }
 
     //Nacitame si zoznam produktov
