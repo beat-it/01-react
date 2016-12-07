@@ -29,7 +29,7 @@ class CartItemsTable extends React.Component {
                     </thead>
                     <tbody>
                         {this.props.products.map((product) => (
-                            <tr key={product.id}>
+                            <tr key={product.productId}>
                                 <td>
                                     <img src="http://placehold.it/80x60" alt="Produkt"/>
                                 </td>
@@ -37,7 +37,7 @@ class CartItemsTable extends React.Component {
                                     {product.name}
                                 </td>
                                 {this.props.locked ? null : (<td>
-                                    <button onClick={() => this.props.onItemDelete(product.id)} className="button">Odstrániť</button>
+                                    <button onClick={() => this.props.onItemDelete(product.productId)} className="button">Odstrániť</button>
                                 </td>)}
                                 <td className="text-center">
                                     {product.price}€ / ks

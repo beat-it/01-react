@@ -13,9 +13,6 @@ class Search extends React.Component {
                     placeholder="Nájdite svoj vytúžený produkt..."
                     value={this.props.searchQuery}
                 />
-                <button onClick={(event) => this.props.onClick()}>
-                    Vyhľadať
-                </button>
             </div>
         );
     }
@@ -23,7 +20,6 @@ class Search extends React.Component {
 
 Search.propTypes = {
     searchQuery: React.PropTypes.string,
-    onClick: React.PropTypes.func,
     onChange: React.PropTypes.func
 };
 

@@ -2,7 +2,8 @@ import React from 'react';
 import update from 'immutability-helper';
 
 import Search from './components/search'
-import Product from './components/product'
+import ProductList from './components/product-list'
+
 import Api from './api'
 
 class Homepage extends React.Component {
@@ -10,152 +11,82 @@ class Homepage extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            product_list:[
-                {
-                    "product_id": "12",
-                    "name": "Product 1",
-                    "price": 20.04,
-                    "currency": "EUR",
-                    "description": "Lorem ipsum dolor sit amet...",
-                    "rating": 3,
-                    "image":{
-                        "url": "http://.....sk/picture/...",
-                        "thumbnail_url": "http://.....sk/picture/thumbnail...",
-                        "catalog_url": "http://placehold.it/200x250/ffffff"
-                    }
-                },
-                {
-                    "product_id": "2",
-                    "name": "Product 1",
-                    "price": 20.04,
-                    "currency": "EUR",
-                    "description": "Lorem ipsum dolor sit amet...",
-                    "rating": 3,
-                    "image":{
-                        "url": "http://.....sk/picture/...",
-                        "thumbnail_url": "http://.....sk/picture/thumbnail...",
-                        "catalog_url": "http://placehold.it/200x250/ffffff"
-                    }
-                },
-                {
-                    "product_id": "33",
-                    "name": "Product 1",
-                    "price": 20.04,
-                    "currency": "EUR",
-                    "description": "Lorem ipsum dolor sit amet...",
-                    "rating": 3,
-                    "image":{
-                        "url": "http://.....sk/picture/...",
-                        "thumbnail_url": "http://.....sk/picture/thumbnail...",
-                        "catalog_url": "http://placehold.it/200x250/ffffff."
-                    }
-                }
-            ],
+            product_list:[],
             query: ""
-        }
-        this.api = new Api('http://localhost:8080/service');
+        };
+        this.api = Api;
     }
 
+    //Nacitame si zoznam produktov
     componentDidMount(){
         this.loadProducts();
     }
 
+    /**
+     * Nacitanie produktov - ak mame query vyhladavame ak nemame volame homepage produkty
+     * @param query
+     */
     loadProducts(query){
-        this.api.get('/catalog/homepage').then(response => {
-            this.setState((prevState) => (
-                update(prevState, {product_list : {$set : response.products}})
-            ))
+        if(!query || query == ""){
+            this.api.get('/catalog/homepage').then(response => {
+                this.setState((prevState) => (
+                    update(prevState, {product_list : {$set : response.products}, query: {$set : ""}})
+                ))
 
-        });
+            });
+        } else {
+            this.api.get("/catalog/search/" + query).then(response => {
+                this.setState((prevState) => {
+                    return update(prevState, {query: {$set : query}, product_list: {$set: response.products}});
+                })
+            });
+        }
     }
 
-    onChangeSearchText(text){
-        this.setState((prevState) => (
-            update(prevState, {query: {$set : text}})
-        ))
+    /**
+     * Odstranenie filtra produktov
+     */
+    onClickDeleteFilter(){
+        this.loadProducts();
     }
 
-    onClickStartSearch(){
-        console.log(this.state)
-    }
-
+    /**
+     * Pridanie produktu do kosika
+     * @param product_id
+     */
     onProductAddToCart(product_id){
         this.context.addToCart(product_id);
     }
 
+    /**
+     * Homepage
+     * @returns {*}
+     */
+    getHomepageData(){
+        let homepageData = null;
+        //Ak mame produkty vratime ProductList inak no products
+        if(this.state.product_list.length > 0){
+            homepageData = <ProductList products={this.state.product_list} onProductAddToCart={(product_id) => this.onProductAddToCart(product_id)} />
+        } else {
+            homepageData = <div id="no-items">Žiadne produkty neboli nájdené. <br/> <a onClick={() => this.onClickDeleteFilter()}>Zrušiť filtrovanie</a></div>
+        }
+        return homepageData;
+    }
+
     render() {
-        // let query = "";
-        //
-        // let products = [
-        //     {
-        //         "product_id": "12",
-        //         "name": "Product 1",
-        //         "price": 20.04,
-        //         "currency": "EUR",
-        //         "description": "Lorem ipsum dolor sit amet...",
-        //         "rating": 3,
-        //         "image":{
-        //             "url": "http://.....sk/picture/...",
-        //             "thumbnail_url": "http://.....sk/picture/thumbnail...",
-        //             "catalog_url": "http://placehold.it/200x250/ffffff"
-        //         }
-        //     },
-        //     {
-        //         "product_id": "2",
-        //         "name": "Product 1",
-        //         "price": 20.04,
-        //         "currency": "EUR",
-        //         "description": "Lorem ipsum dolor sit amet...",
-        //         "rating": 3,
-        //         "image":{
-        //             "url": "http://.....sk/picture/...",
-        //             "thumbnail_url": "http://.....sk/picture/thumbnail...",
-        //             "catalog_url": "http://placehold.it/200x250/ffffff"
-        //         }
-        //     },
-        //     {
-        //         "product_id": "33",
-        //         "name": "Product 1",
-        //         "price": 20.04,
-        //         "currency": "EUR",
-        //         "description": "Lorem ipsum dolor sit amet...",
-        //         "rating": 3,
-        //         "image":{
-        //             "url": "http://.....sk/picture/...",
-        //             "thumbnail_url": "http://.....sk/picture/thumbnail...",
-        //             "catalog_url": "http://placehold.it/200x250/ffffff."
-        //         }
-        //     }
-        // ];
         return (
             <div>
                 <div id="main-container">
                     <div id="banner-container">
                         <div className="container">
-                            <span className="text">
-
-                            </span>
-                            <Search onChange={(text) => this.onChangeSearchText(text)}
-                                    onClick={() => this.onClickStartSearch()}
+                            <Search onChange={(query) => this.loadProducts(query)}
                                     searchQuery={this.state.query}
                             />
                         </div>
                     </div>
                     <div className="container">
                         <div className="products-container">
-
-                            {this.state.product_list.map((product) => (
-                                <Product
-                                    key={product.productId}
-                                    id={product.productId}
-                                    name={product.name}
-                                    rating={product.rating}
-                                    thumbnail={product.image.catalog_url}
-                                    description={product.description}
-                                    price={product.price}
-                                    onAddToCart={(product_id) => this.onProductAddToCart(product_id)}
-                                />
-                            ))}
+                            {this.getHomepageData()}
                             <div className="clear"/>
                         </div>
                     </div>
