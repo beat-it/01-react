@@ -8,10 +8,8 @@ import CartStepper from './components/cart/cart-stepper';
 
 import Api from './api'
 
-//TODO -> pripravit sa na to aby sme vedeli pridat a odobrat produkt podla tych metod ktore mame
 class Cart extends React.Component {
 
-    //https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map
     constructor(props) {
         super(props);
 
@@ -24,7 +22,7 @@ class Cart extends React.Component {
                 "phone": ""
             },
             billing_address: {
-                billingAddress:{
+                billingAddress: {
                     "street": "",
                     "city": "",
                     "zip": "",
@@ -48,7 +46,9 @@ class Cart extends React.Component {
             payment: "CARD_ONLINE",
             shopping_company: false,
             different_del_address: false,
-            validation_problems: []
+            validation_problems: [],
+            deliveryOpts: {},
+            paymentOpts: {}
         };
 
         this.deliveryOpts = [];
@@ -61,7 +61,7 @@ class Cart extends React.Component {
         this.initCart();
     }
 
-    static getEmptyCompany(){
+    static getEmptyCompany() {
         return {
             "name": "",
             "dic": "",
@@ -70,7 +70,7 @@ class Cart extends React.Component {
         };
     }
 
-    static getEmptyAddress(){
+    static getEmptyAddress() {
         return {
             "street": "",
             "city": "",
@@ -79,7 +79,7 @@ class Cart extends React.Component {
         };
     }
 
-    static getEmptyPerson(){
+    static getEmptyPerson() {
         return {
             "forename": "",
             "surname": "",
@@ -92,8 +92,8 @@ class Cart extends React.Component {
      * @deprecated
      * @param onSuccess
      */
-    mergeBillingAndDeliveryAddress(onSuccess){
-        if(!this.state.different_del_address){
+    mergeBillingAndDeliveryAddress(onSuccess) {
+        if (!this.state.different_del_address) {
             this.setState((prevState) => {
                 let delivery_address = {
                     "street": prevState.billing_address.billingAddress.street,
@@ -121,7 +121,12 @@ class Cart extends React.Component {
                     delivery: {$set: response.payment.deliveryType},
                     payment: {$set: response.payment.paymentMethod},
                     person: {$set: response.person ? response.person : Cart.getEmptyPerson()},
-                    billing_address: {$set: response.billingDetails ? response.billingDetails : {billingAddress: Cart.getEmptyAddress(), company: Cart.getEmptyCompany()}},
+                    billing_address: {
+                        $set: response.billingDetails ? response.billingDetails : {
+                            billingAddress: Cart.getEmptyAddress(),
+                            company: Cart.getEmptyCompany()
+                        }
+                    },
                     delivery_address: {$set: response.address ? response.address : Cart.getEmptyAddress()},
                     different_del_address: {$set: response.address ? true : false},
                     shopping_company: {$set: response.billingDetails && response.billingDetails.company.name !== "" ? true : false}
@@ -130,21 +135,48 @@ class Cart extends React.Component {
         });
     }
 
-    /**
-     * TODO UPRAVIT NA STATE
-     * PROMISE ALL -> toto zavolat aj s load cart
-     */
+    createDeliveryPaymentOptsFromResponse(response) {
+        let object = {};
+        response.map(item => {
+            object[item.id] = item;
+        });
+
+        return object;
+    }
+
     /**
      * Inicializacia kosik
      * @param onSuccess
      */
     initCart(onSuccess) {
-        this.api.get('/cart/delivery').then(response => {
-            this.deliveryOpts = response;
-            this.api.get('/cart/payment').then(response => {
-                this.paymentOpts = response;
-                this.loadCart();
-            });
+        let promises = [];
+        promises.push(this.api.get('/cart/delivery'));
+        promises.push(this.api.get('/cart/payment'));
+        promises.push(this.api.get('/cart'));
+        Promise.all(promises).then(responses => {
+            this.deliveryOpts = responses[0];
+            this.paymentOpts = responses[1];
+            this.setState((prevState, props) => (
+                update(prevState, {
+                    cart_items: {$set: responses[2].cartItems},
+                    delivery: {$set: responses[2].payment.deliveryType},
+                    payment: {$set: responses[2].payment.paymentMethod},
+                    person: {$set: responses[2].person ? responses[2].person : Cart.getEmptyPerson()},
+                    billing_address: {
+                        $set: responses[2].billingDetails ? responses[2].billingDetails : {
+                            billingAddress: Cart.getEmptyAddress(),
+                            company: Cart.getEmptyCompany()
+                        }
+                    },
+                    delivery_address: {$set: responses[2].address ? responses[2].address : Cart.getEmptyAddress()},
+                    different_del_address: {$set: responses[2].address ? true : false},
+                    shopping_company: {$set: responses[2].billingDetails && responses[2].billingDetails.company.name !== "" ? true : false},
+                    paymentOpts: {$set: this.createDeliveryPaymentOptsFromResponse(responses[1])},
+                    deliveryOpts: {$set: this.createDeliveryPaymentOptsFromResponse(responses[0])}
+                }, () => {
+                    onSuccess();
+                })
+            ));
         });
     }
 
@@ -238,8 +270,8 @@ class Cart extends React.Component {
      */
     getTotalPrice() {
         let itemsPrice = 0;
-        let deliveryPrice = this.getActiveDelivery().price;
-        let paymentPrice = this.getActivePayment().price;
+        let deliveryPrice = this.getActiveDelivery() ? this.getActiveDelivery().price : 0;
+        let paymentPrice = this.getActivePayment() ? this.getActivePayment().price : 0;
 
 
         this.state.cart_items.map((item) => {
@@ -283,7 +315,7 @@ class Cart extends React.Component {
      * @param id
      */
     onCartItemDelete(id) {
-        this.context.removeFromCart(id,() => {
+        this.context.removeFromCart(id, () => {
             this.loadCart();
         });
 
@@ -319,14 +351,17 @@ class Cart extends React.Component {
             case 0:
                 return window.location = "/";
             case 2:
-                this.api.put('/cart',{deliveryType: this.state.delivery, paymentMethod: this.state.payment}).then(response => {
+                this.api.put('/cart', {
+                    deliveryType: this.state.delivery,
+                    paymentMethod: this.state.payment
+                }).then(response => {
                     this.changeStep(step_id);
                 });
                 break;
             case 3:
                 if (this.state.active_step == 2) {
                     this.validateInputs(()=> {
-                        this.api.put('/cart',{
+                        this.api.put('/cart', {
                             person: {
                                 "forename": this.state.person.forename,
                                 "surname": this.state.person.surname,
@@ -344,8 +379,8 @@ class Cart extends React.Component {
             case 4:
                 alert("Ďakujeme za nákup");
                 window.setTimeout(function () {
-                   window.location = '/';
-                },3000);
+                    window.location = '/';
+                }, 3000);
                 break;
             default:
                 this.changeStep(step_id);
@@ -358,7 +393,10 @@ class Cart extends React.Component {
      */
     onChangeShoopingCompany(value) {
         this.setState((prevState, props) => (
-            update(prevState, {shopping_company: {$set: value},  billing_address: {company: {$set: this.getEmptyCompany()}}})
+            update(prevState, {
+                shopping_company: {$set: value},
+                billing_address: {company: {$set: Cart.getEmptyCompany()}}
+            })
         ));
     }
 
@@ -393,16 +431,13 @@ class Cart extends React.Component {
      */
     getActivePayment() {
         let payment = null;
-        this.getPaymentOpts().map((item) => {
-            if (item.id == this.state.payment) {
-                return payment = item;
-            }
-        });
-
-        if (!payment) {
-            return this.getPaymentOpts()[0];
+        if (this.state.payment in this.state.paymentOpts) {
+            payment = this.state.paymentOpts[this.state.payment];
         }
 
+        if (!payment) {
+            return this.state.paymentOpts[Object.keys(this.state.paymentOpts)[0]];
+        }
         return payment;
     }
 
@@ -412,14 +447,13 @@ class Cart extends React.Component {
      */
     getActiveDelivery() {
         let delivery = null;
-        this.getDeliveryOpts().map((item) => {
-            if (item.id == this.state.delivery) {
-                return delivery = item;
-            }
-        });
+
+        if (this.state.delivery in this.state.deliveryOpts) {
+            delivery = this.state.deliveryOpts[this.state.delivery];
+        }
 
         if (!delivery) {
-            return this.getDeliveryOpts()[0];
+            delivery = this.state.deliveryOpts[Object.keys(this.state.deliveryOpts)[0]];
         }
 
         return delivery;
@@ -429,77 +463,74 @@ class Cart extends React.Component {
      * Vrati sablonu kosika
      * @returns {*}
      */
-    getStep(){
+    getStep() {
         let stepData = null;
 
-        const delivery_opts = this.getDeliveryOpts();
 
-        const payment_opts = this.getPaymentOpts();
+        if (this.state.cart_items.length == 0) {
+            return (
+                <div id="no-items">Váš košík neobsahuje žiadne produkty. <br/> <a href="/">Hor sa
+                    nakupovať</a></div>
+            )
+        }
 
-        //TODO Ked prerobis delivery - toto odstran
-        if (delivery_opts.length != 0 && payment_opts.length != 0) {
-            let cart_prices = this.getTotalPrice();
+        let cart_prices = this.getTotalPrice();
 
-            let payment = this.getActivePayment();
+        let payment = this.getActivePayment();
 
-            let delivery = this.getActiveDelivery();
+        let delivery = this.getActiveDelivery();
 
-            switch (this.state.active_step) {
-                case 1:
-                    if (this.state.cart_items.length > 0) {
-                        stepData = (
-                            <CartStep1 products={this.state.cart_items}
-                                       paymentOpts={payment_opts}
-                                       deliveryOpts={delivery_opts}
+        switch (this.state.active_step) {
+            case 1:
+                stepData = (
+                    <CartStep1 products={this.state.cart_items}
+                               paymentOpts={this.state.paymentOpts}
+                               deliveryOpts={this.state.deliveryOpts}
 
-                                       payment={payment}
-                                       delivery={delivery}
-                                       productTotalPrice={cart_prices.items_price}
-                                       totalPrice={cart_prices.total_price}
+                               payment={payment}
+                               delivery={delivery}
+                               productTotalPrice={cart_prices.items_price}
+                               totalPrice={cart_prices.total_price}
 
-                                       onChangeStep={(step) => this.onChangeStep(step)}
-                                       onCartItemDelete={(id) => this.onCartItemDelete(id)}
-                                       onChangeDelivery={(id) => this.onChangeDelivery(id)}
-                                       onChangePayment={(id) => this.onChangePayment(id)}
-                            />
-                        );
-                    } else {
-                        stepData = (
-                            <div id="no-items">Váš košík neobsahuje žiadne produkty. <br/> <a href="/">Hor sa
-                                nakupovať</a></div>
-                        )
-                    }
-
-                    break;
-                case 2:
-                    stepData = (
-                        <CartStep2 person={this.state.person}
-                                   billing_address={this.state.billing_address}
-                                   delivery_address={this.state.delivery_address}
-                                   shoppingCompany={this.state.shopping_company}
-                                   differentDelAddress={this.state.different_del_address}
-                                   onChangeShoppingCompany={(state) => this.onChangeShoopingCompany(state)}
-                                   onChangeDifferentDelAddress={(state) => this.onChangeDifferentDelAddress(state)}
-                                   onChangeInput={(change, id) => this.onChangeInput(change, id)}
-                                   onChangeStep={(step) => this.onChangeStep(step)}
-                                   validationProblems={this.state.validation_problems}
-                        />
-                    );
-                    break;
-                case 3:
-                    stepData = (
-                        <CartStep3 products={this.state.cart_items}
-                                   person={this.state.person}
-                                   billing_address={this.state.billing_address}
-                                   delivery_address={this.state.delivery_address}
-                                   payment={payment}
-                                   delivery={delivery}
-                                   onChangeStep={(step) => this.onChangeStep(step)}
-                                   differentDelAddress={this.state.different_del_address}
-                        />
-                    );
-                    break;
-            }
+                               onChangeStep={(step) => this.onChangeStep(step)}
+                               onCartItemDelete={(id) => this.onCartItemDelete(id)}
+                               onChangeDelivery={(id) => this.onChangeDelivery(id)}
+                               onChangePayment={(id) => this.onChangePayment(id)}
+                    />
+                );
+                break;
+            case
+            2
+            :
+                stepData = (
+                    <CartStep2 person={this.state.person}
+                               billing_address={this.state.billing_address}
+                               delivery_address={this.state.delivery_address}
+                               shoppingCompany={this.state.shopping_company}
+                               differentDelAddress={this.state.different_del_address}
+                               onChangeShoppingCompany={(state) => this.onChangeShoopingCompany(state)}
+                               onChangeDifferentDelAddress={(state) => this.onChangeDifferentDelAddress(state)}
+                               onChangeInput={(change, id) => this.onChangeInput(change, id)}
+                               onChangeStep={(step) => this.onChangeStep(step)}
+                               validationProblems={this.state.validation_problems}
+                    />
+                );
+                break;
+            case
+            3
+            :
+                stepData = (
+                    <CartStep3 products={this.state.cart_items}
+                               person={this.state.person}
+                               billing_address={this.state.billing_address}
+                               delivery_address={this.state.delivery_address}
+                               payment={payment}
+                               delivery={delivery}
+                               onChangeStep={(step) => this.onChangeStep(step)}
+                               differentDelAddress={this.state.different_del_address}
+                    />
+                );
+                break;
         }
 
         return stepData;
@@ -509,9 +540,9 @@ class Cart extends React.Component {
      * Vrati steper
      * @returns {*}
      */
-    getSteper(){
+    getSteper() {
         let stepper = null;
-        if(this.state.cart_items.length > 0){
+        if (this.state.cart_items.length > 0) {
             stepper = <CartStepper active={this.state.active_step}/>
         }
         return stepper;

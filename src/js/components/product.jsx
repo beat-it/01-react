@@ -2,7 +2,7 @@
  * Created by laci on 29.11.16.
  */
 import React from 'react';
-//todo ratat s menou
+
 class Product extends React.Component {
 
     /**

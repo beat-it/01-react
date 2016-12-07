@@ -15,12 +15,12 @@ class CartStep1 extends React.Component {
                 <div id="payment-delivery-container" className="row">
                     <DefaultBox name="Spôsob platby">
                         <ul>
-                            {this.props.paymentOpts.map((payment) => (
-                                <li key={payment.id}>
-                                    <input checked={this.props.payment.id == payment.id} name="payment" type="radio" id={payment.id} value={payment.id} onChange={() => this.props.onChangePayment(payment.id)}/>
-                                    <label htmlFor={payment.id}>{payment.name}</label>
+                            {Object.keys(this.props.paymentOpts).map((id) => (
+                                <li key={id}>
+                                    <input checked={this.props.payment.id == id} name="payment" type="radio" id={id} value={id} onChange={() => this.props.onChangePayment(id)}/>
+                                    <label htmlFor={id}>{this.props.paymentOpts[id].name}</label>
                                     <span className="price">
-                                        {payment.price}€
+                                        {this.props.paymentOpts[id].price}€
                                     </span>
                                 </li>
                             ))}
@@ -29,12 +29,12 @@ class CartStep1 extends React.Component {
 
                     <DefaultBox name="Spôsob dopravy">
                         <ul>
-                            {this.props.deliveryOpts.map((delivery) => (
-                                <li key={delivery.id}>
-                                    <input checked={this.props.delivery.id == delivery.id} name="delivery" type="radio" id={delivery.id} value={delivery.id} onChange={() => this.props.onChangeDelivery(delivery.id)}/>
-                                    <label htmlFor={delivery.id}>{delivery.name}</label>
+                            {Object.keys(this.props.deliveryOpts).map((id) => (
+                                <li key={id}>
+                                    <input checked={this.props.delivery.id == id} name="delivery" type="radio" id={id} value={id} onChange={() => this.props.onChangeDelivery(id)}/>
+                                    <label htmlFor={id}>{this.props.deliveryOpts[id].name}</label>
                                     <span className="price">
-                                        {delivery.price}€
+                                        {this.props.deliveryOpts[id].price}€
                                     </span>
                                 </li>
                             ))}
@@ -83,8 +83,8 @@ class CartStep1 extends React.Component {
 
 CartStep1.propTypes = {
     products: React.PropTypes.array,
-    paymentOpts: React.PropTypes.array,
-    deliveryOpts: React.PropTypes.array,
+    paymentOpts: React.PropTypes.object,
+    deliveryOpts: React.PropTypes.object,
     payment: React.PropTypes.object,
     delivery: React.PropTypes.object,
     productTotalPrice: React.PropTypes.number,
